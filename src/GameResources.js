@@ -19,5 +19,6 @@ var GameResources = [
     { name: "collision_tiles", type: "image", src: "data/collision_tiles.png" },
 
     { name: "testlevel", type: "tmx", src: "data/testlevel.tmx"     },
-    { name: "gravity",   type: "tmx", src: "data/gravity_level.tmx" }
+    { name: "gravity",   type: "tmx", src: "data/gravity_level.tmx" },
+    { name: "level1",   type: "tmx", src: "data/level1.tmx" }
 ];

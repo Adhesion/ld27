@@ -26,6 +26,9 @@ var Player = me.ObjectEntity.extend(
 
         this.stunCooldown = 0;
 
+        this.pushTimer = 0;
+        this.pushTimerMax = 60;
+
         this.collidable = true;
 
         this.inSpace = false;
@@ -56,8 +59,13 @@ var Player = me.ObjectEntity.extend(
 
     update: function()
     {
-        if( this.hp > 0 ) {
+        if( this.hp > 0 && this.pushTimer == 0 ) {
             this.checkInput();
+        }
+
+        if( this.pushTimer > 0 )
+        {
+            this.pushTimer--;
         }
 
         //if ( this.wallStuckCounter > 0 ) --this.wallStuckCounter;
@@ -86,11 +94,13 @@ var Player = me.ObjectEntity.extend(
                 this.gravity = 0;
                 this.setFriction( 0.001, 0.001);
                 this.inSpace = true;
+                console.log( "SPAAAAACE" );
             }
             if( colRes.obj.type == "los" )
             {
                 // player got seen by some SHIT
                 // !
+                colRes.obj.seen();
             }
             if( colRes.obj.type == "enemyBullet" )
             {
@@ -207,12 +217,21 @@ var Player = me.ObjectEntity.extend(
     {
         var posX, posY;
         posX = this.pos.x; posY = this.pos.y;
-        console.log( "making stun at " + this.pos.x + ", " + this.pos.y );
         var curStun = new PlayerParticle( posX, posY, "jump", 48, [ 0, 1, 2, 3, 4, 5, 6, 7, 8 ], 4, "stun", false, this.curWalkLeft );
         curStun.vel.x = 5.0 * ( this.curWalkLeft ? -1.0 : 1.0 );
         me.game.add( curStun, 4 );
         me.game.sort();
         //me.audio.play( "stun" );
+    },
+
+    pushed: function( vel )
+    {
+        this.setVelocity( this.origVelocity.x * 10.0, this.origVelocity.y * 10.0 );
+        this.vel.x += 10.0 * vel.x;
+        // flicker & set vel back to orig vel on end
+        this.renderable.flicker( this.pushTimerMax,
+            (function() { this.setVelocity( this.origVelocity.x, this.origVelocity.y ); }).bind(this) );
+        this.pushTimer = this.pushTimerMax;
     }
 
     /*updateStunPos: function()

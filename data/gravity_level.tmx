@@ -19,7 +19,7 @@
   </data>
  </layer>
  <objectgroup name="Entities" width="25" height="20">
-  <object name="enemy" x="897" y="338" width="205" height="201">
+  <object name="pusherbot" x="897" y="338" width="205" height="201">
    <properties>
     <property name="image" value="robut"/>
    </properties>

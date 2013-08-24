@@ -19,18 +19,8 @@
   </data>
  </layer>
  <objectgroup name="Entities" width="25" height="20">
-  <object name="pusherbot" x="897" y="338" width="205" height="201">
-   <properties>
-    <property name="image" value="robut"/>
-   </properties>
-  </object>
-  <object name="player" x="172" y="351" width="193" height="183">
-   <properties>
-    <property name="image" value="player"/>
-    <property name="spriteheight" value="144"/>
-    <property name="spritewidth" value="144"/>
-   </properties>
-  </object>
+  <object name="pusherbot" x="897" y="338" width="205" height="201"/>
+  <object name="player" x="172" y="351" width="193" height="183"/>
   <object name="zerogravity" type="zerogravity" x="428" y="45" width="342" height="534"/>
  </objectgroup>
  <layer name="foreground" width="25" height="20">

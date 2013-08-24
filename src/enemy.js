@@ -55,25 +55,29 @@ var Enemy = me.ObjectEntity.extend({
         this.AIstate = "idle";
     },
 
+    // what the robot does on idle
+    patrol: function()
+    {
+        console.log( "base patrol" );
+    },
+
+    // what the robot does when it sees you
+    madAct: function()
+    {
+
+    },
+
     update: function()
     {
         var lastWalkRight = this.walkRight;
 
         if( this.AIstate == "idle" )
         {
-            this.walkCounter++;
-            if( this.walkCounter >= this.walkCounterMax )
-            {
-                this.walkRight = !this.walkRight;
-                this.walkCounter = 0;
-            }
-
-            this.doWalk( !this.walkRight );
+            this.patrol();
         }
         else if( this.AIstate == "mad" )
         {
-            this.walkRight = !(this.pos.x > me.game.player.pos.x);
-            this.doWalk( !this.walkRight );
+            this.madAct();
 
             this.madCounter--;
             if( this.madCounter == 0 )
@@ -143,6 +147,31 @@ var Enemy = me.ObjectEntity.extend({
                 this.sight.flipX( !this.walkRight );
             }
         }
+    }
+});
+
+var PusherBot = Enemy.extend({
+    init: function( x, y, settings )
+    {
+        this.parent( x, y, settings );
+    },
+
+    patrol: function()
+    {
+        this.walkCounter++;
+        if( this.walkCounter >= this.walkCounterMax )
+        {
+            this.walkRight = !this.walkRight;
+            this.walkCounter = 0;
+        }
+
+        this.doWalk( !this.walkRight );
+    },
+
+    madAct: function()
+    {
+        this.walkRight = !(this.pos.x > me.game.player.pos.x);
+        this.doWalk( !this.walkRight );
     }
 });
 

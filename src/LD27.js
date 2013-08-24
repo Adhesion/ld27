@@ -27,6 +27,7 @@ var jsApp = {
 
         me.entityPool.add( "player", Player );
         me.entityPool.add( "enemy", Enemy );
+        me.entityPool.add( "pusherbot", PusherBot );
         me.entityPool.add( "zerogravity", ZeroGravityZone );
     }
 };

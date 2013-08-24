@@ -170,15 +170,6 @@ var Player = me.ObjectEntity.extend(
                 this.curWalkLeft = false;
             }
 
-            if ( me.input.isKeyPressed( "stun" ) )
-            {
-                if( this.stunCooldown == 0 )
-                {
-                    this.stun();
-                    this.stunCooldown = this.stunCooldownMax;
-                }
-            }
-
             if ( me.input.isKeyPressed( "jetpack" ) && this.tryFireJetpack() )
             {
                 this.vel.y -= 0.7 * me.timer.tick;
@@ -204,12 +195,21 @@ var Player = me.ObjectEntity.extend(
             if( me.input.isKeyPressed( "left" ) )
             {
                 this.vel.x -= floatSpeed * me.timer.tick;
-                this.flipX( !(this.curWalkLeft = false ));
+                this.flipX( (this.curWalkLeft = true ));
             }
             if( me.input.isKeyPressed( "right" ) )
             {
                 this.vel.x += floatSpeed * me.timer.tick;
-                this.flipX( !(this.curWalkLeft = true ));
+                this.flipX( (this.curWalkLeft = false ));
+            }
+        }
+
+        if ( me.input.isKeyPressed( "stun" ) )
+        {
+            if( this.stunCooldown == 0 )
+            {
+                this.stun();
+                this.stunCooldown = this.stunCooldownMax;
             }
         }
 

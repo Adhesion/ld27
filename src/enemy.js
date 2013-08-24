@@ -91,16 +91,8 @@ var Enemy = me.ObjectEntity.extend({
         }
 
         this.updateMovement();
-        var res = me.game.collide( this );
-        if( res )
-        {
-            if( res.obj.type == "stun" )
-            {
-                me.game.remove( res.obj );
-                this.AIstate = "stunned";
-                this.stunTimer = 600;
-            }
-        }
+
+        me.game.collide( this, true ).forEach( this.collisionHandler, this );
 
         this.updateLOSPOS( lastWalkRight );
 
@@ -108,6 +100,16 @@ var Enemy = me.ObjectEntity.extend({
         if ( move )
             this.parent( this );
         return move;
+    },
+
+    collisionHandler: function( res )
+    {
+        if( res.obj.type == "stun" )
+        {
+            me.game.remove( res.obj );
+            this.AIstate = "stunned";
+            this.stunTimer = 600;
+        }
     },
 
     onCollision: function( res, obj )

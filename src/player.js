@@ -92,27 +92,10 @@ var Player = me.ObjectEntity.extend(
         }
 
         // check collision against other objects
-        var colRes = me.game.collide( this );
-        if( colRes )
+        var collisions = me.game.collide( this, true );
+        if( collisions.length > 0 )
         {
-            if( !this.inSpace && colRes.obj.type == "space" )
-            {
-                // release him... into SPACE
-                this.gravity = 0;
-                this.setFriction( 0.001, 0.001);
-                this.inSpace = true;
-                console.log( "SPAAAAACE" );
-            }
-            if( colRes.obj.type == "los" )
-            {
-                // player got seen by some SHIT
-                // !
-                colRes.obj.seen();
-            }
-            if( colRes.obj.type == "enemyBullet" )
-            {
-                // DEAD, YOU ARE - DEAD
-            }
+            collisions.forEach( this.handleCollision, this );
         }
         else if( this.inSpace )
         {
@@ -130,6 +113,27 @@ var Player = me.ObjectEntity.extend(
 
         this.parent( this );
         return true;
+    },
+
+    handleCollision: function( colRes )
+    {
+        if( !this.inSpace && colRes.obj.type == "space" )
+        {
+            // release him... into SPACE
+            this.gravity = 0;
+            this.setFriction( 0.001, 0.001);
+            this.inSpace = true;
+        }
+        if( colRes.obj.type == "los" )
+        {
+            // player got seen by some SHIT
+            // !
+            colRes.obj.seen();
+        }
+        if( colRes.obj.type == "enemyBullet" )
+        {
+            // DEAD, YOU ARE - DEAD
+        }
     },
 
     checkInput: function()

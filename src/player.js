@@ -75,10 +75,15 @@ var Player = me.ObjectEntity.extend(
         var colRes = me.game.collide( this );
         if( colRes )
         {
-            if ( !this.inSpace && colRes.obj.type == "space" )
+            if( !this.inSpace && colRes.obj.type == "space" )
             {
                 // space shit here
                 this.inSpace = true;
+            }
+            if( colRes.obj.type == "los" )
+            {
+                // player got seen by some SHIT
+                // !
             }
         }
 

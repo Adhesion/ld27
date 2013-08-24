@@ -12,7 +12,8 @@ var GameResources = [
     { name: "radmarslogo",     type: "audio", src: "data/", channels: 2     },
 
     { name: "player", type: "image", src: "data/player.png" },
-    { name: "enemy", type: "image", src: "data/robut.png" },
+    { name: "robut", type: "image", src: "data/robut.png" },
+    { name: "los", type: "image", src: "data/los.png" },
 
     { name: "collision_tiles", type: "image", src: "data/collision_tiles.png" },
 

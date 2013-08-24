@@ -26,6 +26,7 @@ var jsApp = {
         me.debug.renderHitBox = true;
 
         me.entityPool.add( "player", Player );
+        me.entityPool.add( "enemy", Enemy );
     }
 };
 

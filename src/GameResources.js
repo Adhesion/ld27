@@ -9,5 +9,12 @@ var GameResources = [
     { name: "intro_mars",     type: "image", src: "data/intro_mars.png"     },
     { name: "intro_radmars1", type: "image", src: "data/intro_radmars1.png" },
     { name: "intro_radmars2", type: "image", src: "data/intro_radmars2.png" },
-    { name: "radmarslogo",     type: "audio", src: "data/", channels: 2     }
+    { name: "radmarslogo",     type: "audio", src: "data/", channels: 2     },
+
+    { name: "player", type: "image", src: "data/player.png" },
+    { name: "enemy", type: "image", src: "data/robut.png" },
+
+    { name: "collision_tiles", type: "image", src: "data/collision_tiles.png" },
+
+    { name: "testlevel", type: "tmx", src: "data/testlevel.tmx" }
 ];

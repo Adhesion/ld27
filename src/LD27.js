@@ -15,14 +15,66 @@ var jsApp = {
 
     loaded: function() {
         me.state.set( me.state.INTRO, new RadmarsScreen() );
+        //me.state.set( me.state.MENU, new TitleScreen() );
+        me.state.set( me.state.PLAY, new PlayScreen() );
+        //me.state.set( me.state.GAMEOVER, new GameOverScreen() );
 
-        me.state.change( me.state.INTRO);
+        //me.state.change( me.state.INTRO );
         //me.state.change( me.state.MENU );
         //me.state.change( me.state.GAMEOVER );
-        //me.state.change( me.state.PLAY );
-        me.debug.renderHitBox = false;
+        me.state.change( me.state.PLAY );
+        me.debug.renderHitBox = true;
+
+        me.entityPool.add( "player", Player );
     }
 };
+
+var PlayScreen = me.ScreenObject.extend(
+{
+    init: function()
+    {
+
+    },
+
+    getLevel: function()
+    {
+        return this.parseLevel( me.levelDirector.getCurrentLevelId() );
+    },
+
+    parseLevel: function( input )
+    {
+        var re = /level(\d+)/;
+        var results = re.exec( input );
+        return results[1];
+    },
+
+    /** Update the level display & music. Called on all level changes. */
+    changeLevel: function( )
+    {
+
+    },
+
+    startLevel: function( level )
+    {
+        // this only gets called on start?
+        me.levelDirector.loadLevel( level );
+        me.game.sort();
+    },
+
+    // this will be called on state change -> this
+    onResetEvent: function()
+    {
+        me.game.addHUD( 0, 0, me.video.getWidth(), me.video.getHeight() );
+        // Some HUD shit here?
+        this.startLevel( location.hash.substr(1) || "level1" );
+    },
+
+    onDestroyEvent: function()
+    {
+        me.game.disableHUD();
+        me.audio.stopTrack();
+    }
+});
 
 var RadmarsScreen = me.ScreenObject.extend({
     init: function() {

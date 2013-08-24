@@ -49,7 +49,7 @@
     <property name="spritewidth" value="144"/>
    </properties>
   </object>
-  <object name="enemy" x="629" y="4324" width="205" height="201">
+  <object name="pusherbot" x="629" y="4324" width="205" height="201">
    <properties>
     <property name="image" value="robut"/>
    </properties>

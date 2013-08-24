@@ -18,16 +18,21 @@ var Player = me.ObjectEntity.extend(
         this.gravity = this.origGravity;
         this.setFriction( 0.25, 0.1 );
 
-        this.hp = 10;
+        this.hp = 3;
 
         /*this.wallStuckGravity = 0.1;
         this.wallStuck = false;
         this.wallStuckCounter = 0;*/
 
         this.stunCooldown = 0;
+        this.stunCooldownMax = 30;
 
         this.pushTimer = 0;
         this.pushTimerMax = 60;
+
+        this.jetpackCooldownMax = 250;
+        this.jetpackCooldown = this.jetpackCooldownMax;
+        this.jetpacked = false; // have we jetpacked this frame?
 
         this.collidable = true;
 
@@ -51,7 +56,7 @@ var Player = me.ObjectEntity.extend(
         me.input.bindKey( me.input.KEY.LEFT, "left" );
         me.input.bindKey( me.input.KEY.RIGHT, "right" );
         me.input.bindKey( me.input.KEY.X, "jump", true );
-        me.input.bindKey( me.input.KEY.C, "jetpack", true );
+        me.input.bindKey( me.input.KEY.C, "jetpack" );
         me.input.bindKey( me.input.KEY.V, "stun" );
 
         me.game.player = this;
@@ -67,6 +72,8 @@ var Player = me.ObjectEntity.extend(
         {
             this.pushTimer--;
         }
+
+        this.jetpacked = false;
 
         //if ( this.wallStuckCounter > 0 ) --this.wallStuckCounter;
         var lastFalling = this.falling;
@@ -115,6 +122,7 @@ var Player = me.ObjectEntity.extend(
         }
 
         if( this.stunCooldown > 0 ) this.stunCooldown--;
+        if( this.jetpackCooldown < this.jetpackCooldownMax && !this.jetpacked ) this.jetpackCooldown += 1;
 
         // update cam follow position
         this.followPos.x = this.pos.x + this.centerOffsetX;
@@ -163,29 +171,40 @@ var Player = me.ObjectEntity.extend(
                 if( this.stunCooldown == 0 )
                 {
                     this.stun();
-                    this.stunCooldown = 600;
+                    this.stunCooldown = this.stunCooldownMax;
                 }
+            }
+
+            if ( me.input.isKeyPressed( "jetpack" ) && this.tryFireJetpack() )
+            {
+                this.vel.y -= 0.7 * me.timer.tick;
             }
         }
         // i'm floating in a most peculiar way
         else
         {
+            var floatSpeed = 0.2;
+            if ( me.input.isKeyPressed( "jetpack" ) && this.tryFireJetpack() )
+            {
+                floatSpeed = 0.7;
+            }
+
             if( me.input.isKeyPressed( "up" ) )
             {
-                this.vel.y -= 0.3 * me.timer.tick;
+                this.vel.y -= floatSpeed * me.timer.tick;
             }
             if( me.input.isKeyPressed( "down" ) )
             {
-                this.vel.y += 0.3 * me.timer.tick;
+                this.vel.y += floatSpeed * me.timer.tick;
             }
             if( me.input.isKeyPressed( "left" ) )
             {
-                this.vel.x -= 0.3 * me.timer.tick;
+                this.vel.x -= floatSpeed * me.timer.tick;
                 this.flipX( !(this.curWalkLeft = false ));
             }
             if( me.input.isKeyPressed( "right" ) )
             {
-                this.vel.x += 0.3 * me.timer.tick;
+                this.vel.x += floatSpeed * me.timer.tick;
                 this.flipX( !(this.curWalkLeft = true ));
             }
         }
@@ -211,6 +230,17 @@ var Player = me.ObjectEntity.extend(
             }
             return;
         }*/
+    },
+
+    tryFireJetpack: function()
+    {
+        var available = this.jetpackCooldown > 0;
+        if ( available )
+        {
+            this.jetpackCooldown -= 10;
+            this.jetpacked = true;
+        }
+        return available;
     },
 
     stun: function()

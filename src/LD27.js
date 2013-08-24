@@ -27,6 +27,7 @@ var jsApp = {
 
         me.entityPool.add( "player", Player );
         me.entityPool.add( "enemy", Enemy );
+        me.entityPool.add( "zerogravity", ZeroGravityZone );
     }
 };
 
@@ -138,7 +139,6 @@ var RadmarsScreen = me.ScreenObject.extend({
     }
 });
 
-// this.startLevel( location.hash.substr(1) || "level1" );
 window.onReady( function() {
     jsApp.onload();
 });

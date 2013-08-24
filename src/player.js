@@ -83,6 +83,8 @@ var Player = me.ObjectEntity.extend(
             if( !this.inSpace && colRes.obj.type == "space" )
             {
                 // release him... into SPACE
+                this.gravity = 0;
+                this.setFriction( 0.001, 0.001);
                 this.inSpace = true;
             }
             if( colRes.obj.type == "los" )
@@ -94,6 +96,12 @@ var Player = me.ObjectEntity.extend(
             {
                 // DEAD, YOU ARE - DEAD
             }
+        }
+        else if( this.inSpace )
+        {
+            this.inSpace = false;
+            this.gravity = this.origGravity;
+            this.setFriction( 0.25, 0.1 );
         }
 
         if( this.stunCooldown > 0 ) this.stunCooldown--;
@@ -152,7 +160,24 @@ var Player = me.ObjectEntity.extend(
         // i'm floating in a most peculiar way
         else
         {
-
+            if( me.input.isKeyPressed( "up" ) )
+            {
+                this.vel.y -= 0.3 * me.timer.tick;
+            }
+            if( me.input.isKeyPressed( "down" ) )
+            {
+                this.vel.y += 0.3 * me.timer.tick;
+            }
+            if( me.input.isKeyPressed( "left" ) )
+            {
+                this.vel.x -= 0.3 * me.timer.tick;
+                this.flipX( !(this.curWalkLeft = false ));
+            }
+            if( me.input.isKeyPressed( "right" ) )
+            {
+                this.vel.x += 0.3 * me.timer.tick;
+                this.flipX( !(this.curWalkLeft = true ));
+            }
         }
 
         /*if ( this.wallStuck )

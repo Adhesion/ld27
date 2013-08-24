@@ -10,6 +10,9 @@ var Player = me.ObjectEntity.extend(
 {
     init: function( x, y, settings )
     {
+        settings.image        = settings.image        || 'player';
+        settings.spritewidth  = settings.spritewidth  || 96;
+        settings.spriteheight = settings.spriteheight || 120;
         this.parent( x, y, settings );
 
         this.origVelocity = new me.Vector2d( 7.0, 11.0 );
@@ -130,7 +133,12 @@ var Player = me.ObjectEntity.extend(
             // !
             colRes.obj.seen();
         }
-        if( colRes.obj.type == "enemyBullet" )
+        if( colRes.obj.type == "laser" )
+        {
+            //console.log( "player laser hit" );
+            // DEAD, YOU ARE - DEAD
+        }
+        if( colRes.obj.type == "missile" )
         {
             // DEAD, YOU ARE - DEAD
         }

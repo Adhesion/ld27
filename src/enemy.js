@@ -108,23 +108,7 @@ var Enemy = me.ObjectEntity.extend({
 
     collisionHandler: function( res )
     {
-        if( res.obj.type == "stun" )
-        {
-            me.game.remove( res.obj );
-            this.AIstate = "stunned";
-            this.stunTimer = 600;
-        }
-    },
 
-    onCollision: function( res, obj )
-    {
-        this.parent( res, obj );
-        // res check is to make sure the enemy is facing the player
-        if ( obj == me.game.player && (res.x < 0 != this.vel.x < 0) )
-        {
-            me.game.player.pushed( this.vel );
-            //me.audio.play( "push" );
-        }
     },
 
     updateLOSPOS: function( lastWalkRight )
@@ -153,6 +137,9 @@ var Enemy = me.ObjectEntity.extend({
 var PusherBot = Enemy.extend({
     init: function( x, y, settings )
     {
+        settings.image        = settings.image        || 'pusherbot';
+        settings.spritewidth  = settings.spritewidth  || 117;
+        settings.spriteheight = settings.spriteheight || 114;
         this.parent( x, y, settings );
     },
 
@@ -172,6 +159,111 @@ var PusherBot = Enemy.extend({
     {
         this.walkRight = !(this.pos.x > me.game.player.pos.x);
         this.doWalk( !this.walkRight );
+    },
+
+    collisionHandler: function( res )
+    {
+        if( res.obj.type == "stun" )
+        {
+            me.game.remove( res.obj );
+            this.AIstate = "stunned";
+            this.stunTimer = 600;
+        }
+    },
+
+    onCollision: function( res, obj )
+    {
+        this.parent( res, obj );
+        // res check is to make sure the enemy is facing the player
+        if ( obj == me.game.player && (res.x < 0 != this.vel.x < 0) )
+        {
+            me.game.player.pushed( this.vel );
+            //me.audio.play( "push" );
+        }
+    }
+});
+
+var LaserBot = Enemy.extend({
+    init: function( x, y, settings )
+    {
+        settings.image        = settings.image        || 'laserbot';
+        settings.spritewidth  = settings.spritewidth  || 120;
+        settings.spriteheight = settings.spriteheight || 120;
+        this.parent( x, y, settings );
+
+        this.laserCooldown = 0;
+        this.laserCooldownMax = 50;
+    },
+
+    patrol: function()
+    {
+
+    },
+
+    madAct: function()
+    {
+        if( this.laserCooldown == 0 )
+            this.fireLasers();
+    },
+
+    fireLasers: function()
+    {
+        var posX = this.pos.x - 245; var posY = this.pos.y + 44;
+        var width = 285; var height = 39;
+        var z = this.z + 1;
+        var frames = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
+
+        var left = new PlayerParticle( posX, posY, "laser", width, frames, 1, "laser", false, true, height );
+
+        posX = this.pos.x + 80;
+        var right = new PlayerParticle( posX, posY, "laser", width, frames, 1, "laser", false, false, height );
+
+        posX = this.pos.x - 83;
+        posY = this.pos.y - 120;
+        var up = new PlayerParticle( posX, posY, "laser", width, frames, 1, "laser", false, false, height );
+        up.updateColRect( 123, 39, -123, 285 );
+        up.renderable.angle = 3 * Math.PI / 2;
+
+        posY = this.pos.y + 223;
+        var down = new PlayerParticle( posX, posY, "laser", width, frames, 1, "laser", false, false, height );
+        down.updateColRect( 123, 39, -123, 285 );
+        down.renderable.angle = Math.PI / 2;
+
+        me.game.add( left, z );
+        me.game.add( right, z );
+        me.game.add( up, z );
+        me.game.add( down, z );
+        me.game.sort();
+
+        this.laserCooldown = this.laserCooldownMax;
+    },
+
+    update: function()
+    {
+        if( this.laserCooldown > 0 )
+            this.laserCooldown--;
+
+        return this.parent();
+    }
+});
+
+var MissileBot = Enemy.extend({
+    init: function( x, y, settings )
+    {
+        settings.image        = settings.image        || 'missilebot';
+        settings.spritewidth  = settings.spritewidth  || 96;
+        settings.spriteheight = settings.spriteheight || 96;
+        this.parent( x, y, settings );
+    },
+
+    patrol: function()
+    {
+
+    },
+
+    madAct: function()
+    {
+
     }
 });
 

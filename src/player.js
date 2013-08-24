@@ -24,11 +24,15 @@ var Player = me.ObjectEntity.extend(
         this.wallStuck = false;
         this.wallStuckCounter = 0;*/
 
+        this.stunCooldown = 0;
+
         this.collidable = true;
 
         this.inSpace = false;
 
         this.haveDoubleJump = true;
+
+        this.curWalkLeft = false;
 
         this.centerOffsetX = 72;
         this.centerOffsetY = 72;
@@ -45,6 +49,7 @@ var Player = me.ObjectEntity.extend(
         me.input.bindKey( me.input.KEY.RIGHT, "right" );
         me.input.bindKey( me.input.KEY.X, "jump", true );
         me.input.bindKey( me.input.KEY.C, "jetpack", true );
+        me.input.bindKey( me.input.KEY.V, "stun" );
 
         me.game.player = this;
     },
@@ -77,7 +82,7 @@ var Player = me.ObjectEntity.extend(
         {
             if( !this.inSpace && colRes.obj.type == "space" )
             {
-                // space shit here
+                // release him... into SPACE
                 this.inSpace = true;
             }
             if( colRes.obj.type == "los" )
@@ -85,7 +90,13 @@ var Player = me.ObjectEntity.extend(
                 // player got seen by some SHIT
                 // !
             }
+            if( colRes.obj.type == "enemyBullet" )
+            {
+                // DEAD, YOU ARE - DEAD
+            }
         }
+
+        if( this.stunCooldown > 0 ) this.stunCooldown--;
 
         // update cam follow position
         this.followPos.x = this.pos.x + this.centerOffsetX;
@@ -121,13 +132,24 @@ var Player = me.ObjectEntity.extend(
             if ( me.input.isKeyPressed( "left" ) )
             {
                 this.doWalk( true );
+                this.curWalkLeft = true;
             }
             else if ( me.input.isKeyPressed( "right" ) )
             {
                 this.doWalk( false );
+                this.curWalkLeft = false;
+            }
+
+            if ( me.input.isKeyPressed( "stun" ) )
+            {
+                if( this.stunCooldown == 0 )
+                {
+                    this.stun();
+                    this.stunCooldown = 600;
+                }
             }
         }
-        // release him... into SPACE
+        // i'm floating in a most peculiar way
         else
         {
 
@@ -154,5 +176,57 @@ var Player = me.ObjectEntity.extend(
             }
             return;
         }*/
+    },
+
+    stun: function()
+    {
+        var posX, posY;
+        posX = this.pos.x; posY = this.pos.y;
+        console.log( "making stun at " + this.pos.x + ", " + this.pos.y );
+        var curStun = new PlayerParticle( posX, posY, "jump", 48, [ 0, 1, 2, 3, 4, 5, 6, 7, 8 ], 4, "stun", false, this.curWalkLeft );
+        curStun.vel.x = 5.0 * ( this.curWalkLeft ? -1.0 : 1.0 );
+        me.game.add( curStun, 4 );
+        me.game.sort();
+        //me.audio.play( "stun" );
+    }
+
+    /*updateStunPos: function()
+    {
+
+    }*/
+});
+
+var PlayerParticle = me.ObjectEntity.extend(
+{
+    init: function( x, y, sprite, spritewidth, frames, speed, type, collide, flip, spriteheight )
+    {
+        var settings = new Object();
+        settings.image = sprite;
+        settings.spritewidth = spritewidth;
+        settings.spriteheight = spriteheight || spritewidth;
+
+        this.parent( x, y, settings );
+
+        this.gravity = 0;
+
+        this.renderable.animationspeed = speed;
+        this.renderable.addAnimation( "play", frames );
+        this.renderable.setCurrentAnimation( "play",
+            (function() { me.game.remove( this, true ); return false; }).bind(this) );
+        this.type = type;
+        this.collide = collide;
+
+        if( flip )
+            this.flipX( flip );
+    },
+
+    update: function()
+    {
+        this.updateMovement();
+
+        if ( this.collide )
+            me.game.collide( this );
+        this.parent();
+        return true;
     }
 });

@@ -14,6 +14,7 @@ var GameResources = [
     { name: "player", type: "image", src: "data/player.png" },
     { name: "robut", type: "image", src: "data/robut.png" },
     { name: "los", type: "image", src: "data/los.png" },
+    { name: "jump", type: "image", src: "data/jump.png" },
 
     { name: "collision_tiles", type: "image", src: "data/collision_tiles.png" },
 

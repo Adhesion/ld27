@@ -24,29 +24,76 @@ var Enemy = me.ObjectEntity.extend({
         me.game.add( this.sight, 5 ); // TODO fix this Z boolsheet (i think this.z is undefined before it gets added/sorted itself afterwards?)
         me.game.sort();
 
+        this.AIstate = "idle";
+        this.stunTimer = 0;
+
         this.walkCounter = 0;
         this.walkCounterMax = 100;
         this.walkRight = true;
+
+        this.type = "enemy";
+    },
+
+    makeMad: function()
+    {
+        if( this.AIstate != "stunned" )
+        {
+            this.AIstate = "mad";
+            // do some timer shit here?
+        }
     },
 
     update: function()
     {
-        var oldVelX = this.vel.x;
-
         var lastWalkRight = this.walkRight;
-        this.walkCounter++;
-        if( this.walkCounter >= this.walkCounterMax )
-        {
-            this.walkRight = !this.walkRight;
-            this.walkCounter = 0;
-        }
 
-        this.doWalk( !this.walkRight );
+        if( this.AIstate == "idle" )
+        {
+            this.walkCounter++;
+            if( this.walkCounter >= this.walkCounterMax )
+            {
+                this.walkRight = !this.walkRight;
+                this.walkCounter = 0;
+            }
+
+            this.doWalk( !this.walkRight );
+        }
+        else if( this.AIstate == "mad" )
+        {
+
+        }
+        else if( this.AIstate == "stunned" )
+        {
+            this.stunTimer--;
+            if( this.stunTimer == 0 )
+            {
+                this.AIstate = "idle";
+            }
+        }
 
         this.updateMovement();
         var res = me.game.collide( this );
+        if( res )
+        {
+            if( res.obj.type == "stun" )
+            {
+                me.game.remove( res.obj );
+                this.AIstate = "stunned";
+                this.stunTimer = 600;
+            }
+        }
 
-        // set proper flame/laser positions
+        this.updateLOSPOS( lastWalkRight );
+
+        var move = ( this.vel.x || this.vel.y );
+        if ( move )
+            this.parent( this );
+        return move;
+    },
+
+    updateLOSPOS: function( lastWalkRight )
+    {
+        // set LOS pos
         if ( this.sight )
         {
             if ( this.walkRight )
@@ -64,11 +111,6 @@ var Enemy = me.ObjectEntity.extend({
                 this.sight.flipX( !this.walkRight );
             }
         }
-
-        var move = ( this.vel.x || this.vel.y );
-        if ( move )
-            this.parent( this );
-        return move;
     }
 });
 
@@ -85,8 +127,12 @@ var LineOfSight = me.ObjectEntity.extend({
 
     checkCollision: function( obj )
     {
-        if ( obj == me.game.player ) {
+        if( obj == me.game.player ) {
             return this.parent( obj );
+        }
+        else if( obj.type == "enemy" )
+        {
+            console.log( "enemy los col????" );
         }
         return null;
     },

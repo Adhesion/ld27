@@ -213,14 +213,41 @@ var LaserBot = Enemy.extend({
         var z = this.z + 1;
         var frames = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
 
-        var left = new PlayerParticle( posX, posY, "laser", width, frames, 1, "laser", false, true, height );
+        var left = new PlayerParticle( posX, posY, {
+            image: "laser",
+            spritewidth: width,
+            spriteheight: height,
+            frames: frames,
+            speed: 1,
+            type: "laser",
+            collide: false,
+            flip: true
+        });
 
         posX = this.pos.x + 80;
-        var right = new PlayerParticle( posX, posY, "laser", width, frames, 1, "laser", false, false, height );
+        var right = new PlayerParticle( posX, posY,{
+            image: "laser",
+            spritewidth: width,
+            spriteheight: height,
+            frames: frames,
+            speed:1,
+            type: "laser",
+            collide: false,
+            flip: false
+        });
 
         posX = this.pos.x - 83;
         posY = this.pos.y - 120;
-        var up = new PlayerParticle( posX, posY, "laser", width, frames, 1, "laser", false, false, height );
+        var up = new PlayerParticle( posX, posY, {
+            image: "laser",
+            spritewidth: width,
+            spriteheight: height, 
+            frames: frames,
+            speed: 1,
+            type: "laser",
+            collide: false,
+            flip: false
+        });
         up.updateColRect( 123, 39, -123, 285 );
         up.renderable.angle = 3 * Math.PI / 2;
 
@@ -275,7 +302,16 @@ var MissileBot = Enemy.extend({
         this.missileCooldown = this.missileCooldownMax;
         var posX = this.pos.x + this.width + 10; var posY = this.pos.y;
         var frames = [ 0 ];
-        var left = new Missile( posX, posY, "missile", 48, frames, 1, "missile", false, !this.walkRight, 48, true );
+        var left = new Missile( posX, posY, {
+            image: "missile",
+            spritewidth: 48,
+            frames: frames,
+            speed: 1,
+            type: "missile",
+            collide: false,
+            flip: !this.walkRight,
+            noAnimation: true
+        });
         me.game.add( left, this.z + 1 );
         me.game.sort();
     },
@@ -290,9 +326,9 @@ var MissileBot = Enemy.extend({
 });
 
 var Missile = PlayerParticle.extend({
-    init: function( x, y, sprite, spritewidth, frames, speed, type, collide, flip, spriteheight, noAnimation )
+    init: function( x, y, settings )
     {
-        this.parent( x, y, sprite, spritewidth, frames, speed, type, collide, flip, spriteheight, noAnimation );
+        this.parent( x, y, settings );
 
         this.setVelocity( 2.5, 2.5 );
         this.life = 400;

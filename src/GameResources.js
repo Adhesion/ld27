@@ -11,19 +11,22 @@ var GameResources = [
     { name: "intro_radmars2", type: "image", src: "data/intro_radmars2.png" },
     { name: "radmarslogo",     type: "audio", src: "data/", channels: 2     },
 
-    { name: "player", type: "image", src: "data/janitor.png" },
-    { name: "robut", type: "image", src: "data/robut.png" },
-    { name: "pusherbot", type: "image", src: "data/taser.png" },
-    { name: "laserbot", type: "image", src: "data/laser.png" },
-    { name: "missilebot", type: "image", src: "data/missile.png" },
-    { name: "los", type: "image", src: "data/los.png" },
-    { name: "jump", type: "image", src: "data/jump.png" },
-    { name: "laser", type: "image", src: "data/laserBeam.png" },
-    { name: "missile", type: "image", src: "data/bossBullet.png" },
+    { name: "jump",       type: "image", src: "data/jump.png"       },
+    { name: "laser",      type: "image", src: "data/laserBeam.png"  },
+    { name: "laserbot",   type: "image", src: "data/laser.png"      },
+    { name: "los",        type: "image", src: "data/los.png"        },
+    { name: "missile",    type: "image", src: "data/bossBullet.png" },
+    { name: "missilebot", type: "image", src: "data/missile.png"    },
+    { name: "player",     type: "image", src: "data/janitor.png"    },
+    { name: "pusherbot",  type: "image", src: "data/taser.png"      },
+    { name: "robut",      type: "image", src: "data/robut.png"      },
+
+    { name: "stun",       type: "image", src: "data/stun.png"       },
+    { name: "zap",        type: "image", src: "data/zap.png"        },
 
     { name: "collision_tiles", type: "image", src: "data/collision_tiles.png" },
 
     { name: "testlevel", type: "tmx", src: "data/testlevel.tmx"     },
     { name: "gravity",   type: "tmx", src: "data/gravity_level.tmx" },
-    { name: "level1",   type: "tmx", src: "data/level1.tmx" }
+    { name: "level1",    type: "tmx", src: "data/level1.tmx"        }
 ];

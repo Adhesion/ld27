@@ -53,8 +53,8 @@ var Player = me.ObjectEntity.extend(
             this.pos.y + this.centerOffsetY );
         this.renderable.addAnimation("Walk", [ 4, 5, 6, 7 ], 10 );
         this.renderable.addAnimation("Idle", [ 0 ], 100 );
-        this.renderable.addAnimation("ShootStun", [ 1, 2 ], 10 );
-        this.renderable.addAnimation("Stunned", [ 4 ], 10 );
+        this.renderable.addAnimation("ShootStun", [ 1, 2 ], 30 );
+        this.renderable.addAnimation("Stunned", [ 3 ], 10 );
 
         this.renderable.setCurrentAnimation( "Idle" );
 
@@ -272,17 +272,15 @@ var Player = me.ObjectEntity.extend(
             this.vel.y *= 10;
 
             for( var p = 0; p < 10; p++ ) {
-                var curStun = new PlayerParticle(
-                    x,
-                    y,
-                    "jump",
-                    48,
-                    [ 0, 1, 2, 3, 4, 5, 6, 7, 8 ],
-                    4,
-                    "stun",
-                    false,
-                    this.curWalkLeft
-                );
+            var curStun = new PlayerParticle( x, y, {
+                    spritewidth: 48,
+                    image:   "jump",
+                    collide: false,
+                    flip:    this.curWalkLeft,
+                    frames:  [ 0, 1, 2, 3, 4, 5, 6, 7, 8 ],
+                    speed:   4,
+                    type:    "stun"
+                });
 
                 curStun.vel.y = vy + Math.sin(p*Math.PI/5);
                 curStun.vel.x = vx + Math.cos(p*Math.PI/5);
@@ -299,21 +297,23 @@ var Player = me.ObjectEntity.extend(
         this.renderable.setCurrentAnimation( "ShootStun", function() {
             self.renderable.setCurrentAnimation("Idle" );
         });
-        var posX = this.pos.x + (this.curWalkLeft ? 0 : 70),
-            posY = this.pos.y + 50;
-        var curStun = new PlayerParticle(
+        var posX = this.pos.x + (this.curWalkLeft ? -40 : 85),
+            posY = this.pos.y + 52;
+        var zap = new PlayerParticle(
             posX,
             posY,
-            "jump",
-            48,
-            [ 0, 1, 2, 3, 4, 5, 6, 7, 8 ],
-            4,
-            "stun",
-            false,
-            this.curWalkLeft
+            {
+                image: "zap",
+                spritewidth: 48,
+                frames: [ 0, 1, 2, 3, 4 ],
+                speed: 4,
+                type: "zap",
+                collide: false,
+                flip: this.curWalkLeft
+            }
         );
-        curStun.vel.x = 5.0 * ( this.curWalkLeft ? -1.0 : 1.0 );
-        me.game.add( curStun, 4 );
+        zap.vel = this.vel;
+        me.game.add( zap, 4 );
         me.game.sort();
         //me.audio.play( "stun" );
     },
@@ -323,8 +323,12 @@ var Player = me.ObjectEntity.extend(
         this.setVelocity( this.origVelocity.x * 10.0, this.origVelocity.y * 10.0 );
         this.vel.x += 10.0 * vel.x;
         // flicker & set vel back to orig vel on end
-        this.renderable.flicker( this.pushTimerMax,
-            (function() { this.setVelocity( this.origVelocity.x, this.origVelocity.y ); }).bind(this) );
+        var self = this;
+        this.renderable.setCurrentAnimation( "Stunned" );
+        this.renderable.flicker( this.pushTimerMax, function() {
+            self.setVelocity( self.origVelocity.x, self.origVelocity.y );
+            self.renderable.setCurrentAnimation( "Idle" );
+        });
         this.pushTimer = this.pushTimerMax;
     }
 
@@ -336,14 +340,19 @@ var Player = me.ObjectEntity.extend(
 
 var PlayerParticle = me.ObjectEntity.extend(
 {
-    init: function( x, y, sprite, spritewidth, frames, speed, type, collide, flip, spriteheight, noAnimation )
+    init: function( x, y, settings )
     {
-        var settings = new Object();
-        settings.image = sprite;
-        settings.spritewidth = spritewidth;
-        settings.spriteheight = spriteheight || spritewidth;
-
-        this.parent( x, y, settings );
+        this.parent( x, y, {
+            image: settings.image,
+            spritewidth: settings.spritewidth,
+            spriteheight: settings.spriteheight || settings.spritewidth,
+        });
+        var frames = settings.frames,
+            speed = settings.speed,
+            type = settings.type,
+            collide = settings.collide,
+            flip = settings.flip,
+            noAnimation = settings.noAnimation;
 
         this.gravity = 0;
 
@@ -352,8 +361,11 @@ var PlayerParticle = me.ObjectEntity.extend(
         if( !noAnimation )
         {
             this.renderable.addAnimation( "play", frames );
-            this.renderable.setCurrentAnimation( "play",
-                (function() { me.game.remove( this, true ); return false; }).bind(this) );
+            var self = this;
+            this.renderable.setCurrentAnimation( "play", function() {
+                me.game.remove( self, true );
+                return false;
+            });
         }
 
         this.type = type;

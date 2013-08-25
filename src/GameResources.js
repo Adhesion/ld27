@@ -19,6 +19,7 @@ var GameResources = [
     { name: "los", type: "image", src: "data/los.png" },
     { name: "jump", type: "image", src: "data/jump.png" },
     { name: "laser", type: "image", src: "data/laserBeam.png" },
+    { name: "missile", type: "image", src: "data/bossBullet.png" },
 
     { name: "collision_tiles", type: "image", src: "data/collision_tiles.png" },
 

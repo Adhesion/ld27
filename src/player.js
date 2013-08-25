@@ -59,7 +59,7 @@ var Player = me.ObjectEntity.extend(
         me.input.bindKey( me.input.KEY.LEFT, "left" );
         me.input.bindKey( me.input.KEY.RIGHT, "right" );
         me.input.bindKey( me.input.KEY.X, "jump", true );
-        me.input.bindKey( me.input.KEY.C, "jetpack" );
+        me.input.bindKey( me.input.KEY.C, "jetpack", true );
         me.input.bindKey( me.input.KEY.V, "stun" );
 
         me.game.player = this;
@@ -141,6 +141,7 @@ var Player = me.ObjectEntity.extend(
         if( colRes.obj.type == "missile" )
         {
             // DEAD, YOU ARE - DEAD
+            colRes.obj.kill();
         }
     },
 
@@ -180,17 +181,15 @@ var Player = me.ObjectEntity.extend(
 
             if ( me.input.isKeyPressed( "jetpack" ) && this.tryFireJetpack() )
             {
-                this.vel.y -= 0.7 * me.timer.tick;
+                this.vel.normalize();
+                this.vel.x *= 10;
+                this.vel.y *= 10;
             }
         }
         // i'm floating in a most peculiar way
         else
         {
             var floatSpeed = 0.2;
-            if ( me.input.isKeyPressed( "jetpack" ) && this.tryFireJetpack() )
-            {
-                floatSpeed = 0.7;
-            }
 
             if( me.input.isKeyPressed( "up" ) )
             {
@@ -209,6 +208,13 @@ var Player = me.ObjectEntity.extend(
             {
                 this.vel.x += floatSpeed * me.timer.tick;
                 this.flipX( (this.curWalkLeft = false ));
+            }
+            // now try to jet pack by setting the speed to some constant.
+            if ( me.input.isKeyPressed( "jetpack" ) && this.tryFireJetpack() )
+            {
+                this.vel.normalize();
+                this.vel.x *= 10;
+                this.vel.y *= 10;
             }
         }
 
@@ -284,7 +290,7 @@ var Player = me.ObjectEntity.extend(
 
 var PlayerParticle = me.ObjectEntity.extend(
 {
-    init: function( x, y, sprite, spritewidth, frames, speed, type, collide, flip, spriteheight )
+    init: function( x, y, sprite, spritewidth, frames, speed, type, collide, flip, spriteheight, noAnimation )
     {
         var settings = new Object();
         settings.image = sprite;
@@ -296,9 +302,14 @@ var PlayerParticle = me.ObjectEntity.extend(
         this.gravity = 0;
 
         this.renderable.animationspeed = speed;
-        this.renderable.addAnimation( "play", frames );
-        this.renderable.setCurrentAnimation( "play",
-            (function() { me.game.remove( this, true ); return false; }).bind(this) );
+
+        if( !noAnimation )
+        {
+            this.renderable.addAnimation( "play", frames );
+            this.renderable.setCurrentAnimation( "play",
+                (function() { me.game.remove( this, true ); return false; }).bind(this) );
+        }
+
         this.type = type;
         this.collide = collide;
 
@@ -311,7 +322,10 @@ var PlayerParticle = me.ObjectEntity.extend(
         this.updateMovement();
 
         if ( this.collide )
+        {
             me.game.collide( this );
+        }
+
         this.parent();
         return true;
     }

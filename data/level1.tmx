@@ -45,13 +45,6 @@
   <object name="player" x="220" y="3873" width="193" height="183">
    <properties>
     <property name="image" value="player"/>
-    <property name="spriteheight" value="144"/>
-    <property name="spritewidth" value="144"/>
-   </properties>
-  </object>
-  <object name="enemy" x="4245" y="3024" width="121" height="123">
-   <properties>
-    <property name="image" value="robut"/>
    </properties>
   </object>
   <object name="zerogravity" type="zerogravity" x="2445" y="2973" width="626" height="1106"/>
@@ -64,5 +57,7 @@
   <object name="zerogravity" type="zerogravity" x="6227" y="1423" width="802" height="1762"/>
   <object name="zerogravity" type="zerogravity" x="7039" y="2247" width="3050" height="922"/>
   <object name="zerogravity" type="zerogravity" x="8395" y="595" width="1690" height="1666"/>
+  <object name="pusherbot" x="4310" y="3028" width="129" height="129"/>
+  <object name="laserbot" x="5522" y="1788" width="117" height="125"/>
  </objectgroup>
 </map>

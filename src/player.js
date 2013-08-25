@@ -20,6 +20,7 @@ var Player = me.ObjectEntity.extend(
         this.origGravity = 0.3;
         this.gravity = this.origGravity;
         this.setFriction( 0.25, 0.1 );
+        this.updateColRect( 11, 70, 9, 106 );
 
         this.hp = 3;
 

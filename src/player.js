@@ -181,7 +181,9 @@ var Player = me.ObjectEntity.extend(
 
             if ( me.input.isKeyPressed( "jetpack" ) && this.tryFireJetpack() )
             {
-                this.vel.y -= 0.7 * me.timer.tick;
+                this.vel.normalize();
+                this.vel.x *= 10;
+                this.vel.y *= 10;
             }
         }
         // i'm floating in a most peculiar way

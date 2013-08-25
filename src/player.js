@@ -41,6 +41,8 @@ var Player = me.ObjectEntity.extend(
         this.collidable = true;
 
         this.inSpace = false;
+        this.spaceTimeMax = 10.0;
+        this.spaceTimeDisplay = -1.0;
 
         this.haveDoubleJump = true;
 
@@ -77,6 +79,24 @@ var Player = me.ObjectEntity.extend(
         me.input.bindKey( me.input.KEY.V, "stun" );
 
         me.game.player = this;
+    },
+
+    hit: function( dmg )
+    {
+        this.hp -= dmg;
+        if( this.hp <= 0 )
+            this.die();
+    },
+
+    die: function()
+    {
+        var duration = 2000;
+        this.renderable.flicker( duration );
+        var fade = '#000000';
+        //me.audio.play( "death" );
+        me.game.viewport.fadeOut( fade, duration, function() {
+            me.state.current().startLevel( me.levelDirector.getCurrentLevelId() );
+        });
     },
 
     update: function()
@@ -125,7 +145,10 @@ var Player = me.ObjectEntity.extend(
             this.inSpace = false;
             this.gravity = this.origGravity;
             this.setFriction( 0.25, 0.1 );
+            this.spaceTimeDisplay = -1.0;
         }
+
+        this.updateSpaceTime();
 
         if( this.stunCooldown > 0 ) this.stunCooldown--;
         if( this.jetpackCooldown < this.jetpackCooldownMax && !this.jetpacked ) this.jetpackCooldown += 1;
@@ -138,6 +161,22 @@ var Player = me.ObjectEntity.extend(
         return true;
     },
 
+    updateSpaceTime: function()
+    {
+        if( this.inSpace )
+        {
+            this.spaceTimeDisplay = ( this.spaceTimeMax * 1000 - ( me.timer.getTime() - this.spaceTimerStart ) ) / 1000;
+            this.spaceTimeDisplay = this.spaceTimeDisplay.toFixed( 1 );
+
+            if( this.spaceTimeDisplay <= 0 ) {
+                this.spaceTimeDisplay = 0;
+                this.die();
+            }
+        }
+
+        me.game.HUD.setItemValue( "spaceTimer", this.spaceTimeDisplay );
+    },
+
     handleCollision: function( colRes )
     {
         if( !this.inSpace && colRes.obj.type == "space" )
@@ -147,6 +186,7 @@ var Player = me.ObjectEntity.extend(
             this.gravity = 0;
             this.setFriction( 0.001, 0.001);
             this.inSpace = true;
+            this.spaceTimerStart = me.timer.getTime();
         }
         if( colRes.obj.type == "los" )
         {

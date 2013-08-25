@@ -68,6 +68,8 @@ var PlayScreen = me.ScreenObject.extend(
         me.levelDirector.loadLevel( level );
         me.game.sort();
         this.doors = [];
+        me.game.HUD.removeItem( "spaceTimer" ); // have to remove old one if so, stupid
+        me.game.HUD.addItem( "spaceTimer", new CountDown());
     },
 
     // this will be called on state change -> this

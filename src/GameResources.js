@@ -28,6 +28,8 @@ var GameResources = [
     { name: "door", type: "image", src: "data/door.png" },
 
     { name: "16x16_font", type: "image", src: "data/16x16_font.png" },
+    { name: "32x32_font", type: "image", src: "data/32x32_font.png" },
+    { name: "64x64_font", type: "image", src: "data/64x64_font.png" },
 
     { name: "collision_tiles", type: "image", src: "data/collision_tiles.png" },
 

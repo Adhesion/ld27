@@ -178,13 +178,6 @@ var Player = me.ObjectEntity.extend(
                 this.doWalk( false );
                 this.curWalkLeft = false;
             }
-
-            if ( me.input.isKeyPressed( "jetpack" ) && this.tryFireJetpack() )
-            {
-                this.vel.normalize();
-                this.vel.x *= 10;
-                this.vel.y *= 10;
-            }
         }
         // i'm floating in a most peculiar way
         else
@@ -209,13 +202,12 @@ var Player = me.ObjectEntity.extend(
                 this.vel.x += floatSpeed * me.timer.tick;
                 this.flipX( (this.curWalkLeft = false ));
             }
-            // now try to jet pack by setting the speed to some constant.
-            if ( me.input.isKeyPressed( "jetpack" ) && this.tryFireJetpack() )
-            {
-                this.vel.normalize();
-                this.vel.x *= 10;
-                this.vel.y *= 10;
-            }
+        }
+
+        // now try to jet pack by setting the speed to some constant.
+        if ( me.input.isKeyPressed( "jetpack" ) )
+        {
+            this.fireJetpack();
         }
 
         if ( me.input.isKeyPressed( "stun" ) )
@@ -250,13 +242,39 @@ var Player = me.ObjectEntity.extend(
         }*/
     },
 
-    tryFireJetpack: function()
+    fireJetpack: function()
     {
         var available = this.jetpackCooldown > 0;
         if ( available )
         {
             this.jetpackCooldown -= 10;
             this.jetpacked = true;
+            this.vel.normalize();
+            var x = this.pos.x + 45,
+                y = this.pos.y + 80,
+                vx = this.vel.x,
+                vy = this.vel.y;
+            this.vel.x *= 10;
+            this.vel.y *= 10;
+
+            for( var p = 0; p < 10; p++ ) {
+                var curStun = new PlayerParticle(
+                    x,
+                    y,
+                    "jump",
+                    48,
+                    [ 0, 1, 2, 3, 4, 5, 6, 7, 8 ],
+                    4,
+                    "stun",
+                    false,
+                    this.curWalkLeft
+                );
+
+                curStun.vel.y = vy + Math.sin(p*Math.PI/5);
+                curStun.vel.x = vx + Math.cos(p*Math.PI/5);
+                me.game.add( curStun, 4 );
+            }
+            me.game.sort();
         }
         return available;
     },

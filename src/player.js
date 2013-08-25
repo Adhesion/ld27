@@ -59,7 +59,7 @@ var Player = me.ObjectEntity.extend(
         me.input.bindKey( me.input.KEY.LEFT, "left" );
         me.input.bindKey( me.input.KEY.RIGHT, "right" );
         me.input.bindKey( me.input.KEY.X, "jump", true );
-        me.input.bindKey( me.input.KEY.C, "jetpack" );
+        me.input.bindKey( me.input.KEY.C, "jetpack", true );
         me.input.bindKey( me.input.KEY.V, "stun" );
 
         me.game.player = this;
@@ -187,10 +187,6 @@ var Player = me.ObjectEntity.extend(
         else
         {
             var floatSpeed = 0.2;
-            if ( me.input.isKeyPressed( "jetpack" ) && this.tryFireJetpack() )
-            {
-                floatSpeed = 0.7;
-            }
 
             if( me.input.isKeyPressed( "up" ) )
             {
@@ -209,6 +205,13 @@ var Player = me.ObjectEntity.extend(
             {
                 this.vel.x += floatSpeed * me.timer.tick;
                 this.flipX( (this.curWalkLeft = false ));
+            }
+            // now try to jet pack by setting the speed to some constant.
+            if ( me.input.isKeyPressed( "jetpack" ) && this.tryFireJetpack() )
+            {
+                this.vel.normalize();
+                this.vel.x *= 10;
+                this.vel.y *= 10;
             }
         }
 

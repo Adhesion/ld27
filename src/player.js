@@ -198,11 +198,15 @@ var Player = me.ObjectEntity.extend(
         {
             //console.log( "player laser hit" );
             // DEAD, YOU ARE - DEAD
+            this.hit( 2 );
+            this.collidable = false;
+            this.renderable.flicker( 100.0, (function() { this.collidable = true; }).bind(this) );
         }
         if( colRes.obj.type == "missile" )
         {
             // DEAD, YOU ARE - DEAD
             colRes.obj.kill();
+            this.hit( 3 );
         }
         if( colRes.obj.door ) {
             // stop if we hit a door
@@ -412,6 +416,7 @@ var Player = me.ObjectEntity.extend(
 
     pushed: function( vel )
     {
+        this.hit( 1 );
         this.setVelocity( this.origVelocity.x * 10.0, this.origVelocity.y * 10.0 );
         this.vel.x += 10.0 * vel.x;
         // flicker & set vel back to orig vel on end

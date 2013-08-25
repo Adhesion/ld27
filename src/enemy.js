@@ -252,7 +252,16 @@ var LaserBot = Enemy.extend({
         up.renderable.angle = 3 * Math.PI / 2;
 
         posY = this.pos.y + 223;
-        var down = new PlayerParticle( posX, posY, "laser", width, frames, 1, "laser", false, false, height );
+        var down = new PlayerParticle( posX, posY, {
+            image: "laser",
+            spritewidth: width,
+            spriteheight: height,
+            frames: frames,
+            speed: 1,
+            type: "laser",
+            collide: false,
+            flip: false
+        });
         down.updateColRect( 123, 39, -123, 285 );
         down.renderable.angle = Math.PI / 2;
 

@@ -141,6 +141,7 @@ var Player = me.ObjectEntity.extend(
         if( colRes.obj.type == "missile" )
         {
             // DEAD, YOU ARE - DEAD
+            colRes.obj.kill();
         }
     },
 
@@ -287,7 +288,7 @@ var Player = me.ObjectEntity.extend(
 
 var PlayerParticle = me.ObjectEntity.extend(
 {
-    init: function( x, y, sprite, spritewidth, frames, speed, type, collide, flip, spriteheight )
+    init: function( x, y, sprite, spritewidth, frames, speed, type, collide, flip, spriteheight, noAnimation )
     {
         var settings = new Object();
         settings.image = sprite;
@@ -299,9 +300,14 @@ var PlayerParticle = me.ObjectEntity.extend(
         this.gravity = 0;
 
         this.renderable.animationspeed = speed;
-        this.renderable.addAnimation( "play", frames );
-        this.renderable.setCurrentAnimation( "play",
-            (function() { me.game.remove( this, true ); return false; }).bind(this) );
+
+        if( !noAnimation )
+        {
+            this.renderable.addAnimation( "play", frames );
+            this.renderable.setCurrentAnimation( "play",
+                (function() { me.game.remove( this, true ); return false; }).bind(this) );
+        }
+
         this.type = type;
         this.collide = collide;
 
@@ -314,7 +320,10 @@ var PlayerParticle = me.ObjectEntity.extend(
         this.updateMovement();
 
         if ( this.collide )
+        {
             me.game.collide( this );
+        }
+
         this.parent();
         return true;
     }

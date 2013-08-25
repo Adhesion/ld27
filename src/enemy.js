@@ -131,7 +131,7 @@ var Enemy = me.ObjectEntity.extend({
                 this.sight.flipX( !this.walkRight );
             }
         }
-    }
+    },
 });
 
 var PusherBot = Enemy.extend({
@@ -254,6 +254,9 @@ var MissileBot = Enemy.extend({
         settings.spritewidth  = settings.spritewidth  || 96;
         settings.spriteheight = settings.spriteheight || 96;
         this.parent( x, y, settings );
+
+        this.missileCooldown = 0;
+        this.missileCooldownMax = 150;
     },
 
     patrol: function()
@@ -263,7 +266,77 @@ var MissileBot = Enemy.extend({
 
     madAct: function()
     {
+        if( this.missileCooldown == 0 )
+            this.fireMissile();
+    },
 
+    fireMissile: function()
+    {
+        this.missileCooldown = this.missileCooldownMax;
+        var posX = this.pos.x + this.width + 10; var posY = this.pos.y;
+        var frames = [ 0 ];
+        var left = new Missile( posX, posY, "missile", 48, frames, 1, "missile", false, !this.walkRight, 48, true );
+        me.game.add( left, this.z + 1 );
+        me.game.sort();
+    },
+
+    update: function()
+    {
+        if( this.missileCooldown > 0 )
+            this.missileCooldown--;
+
+        return this.parent();
+    }
+});
+
+var Missile = PlayerParticle.extend({
+    init: function( x, y, sprite, spritewidth, frames, speed, type, collide, flip, spriteheight, noAnimation )
+    {
+        this.parent( x, y, sprite, spritewidth, frames, speed, type, collide, flip, spriteheight, noAnimation );
+
+        this.setVelocity( 2.5, 2.5 );
+        this.life = 400;
+    },
+
+    update: function()
+    {
+        var distance = this.toPlayer();
+        if( Math.abs(distance.x) > 20.0 ) this.vel.x += (distance.x * 0.0005 + (Math.random()*0.5 - 0.25));
+        if( Math.abs(distance.y) > 20.0 ) this.vel.y += (distance.y * 0.0005 + (Math.random()*0.5 - 0.25));
+        this.renderable.angle = Math.atan2( distance.y, distance.x );
+
+        var res = this.updateMovement();
+        if( res.x != 0 || res.y != 0 )
+        {
+            this.kill();
+        }
+
+        this.life--;
+        if( this.life <= 0 )
+            this.kill();
+
+        return true;
+    },
+
+    kill: function()
+    {
+        this.collidable = false;
+        me.game.remove( this );
+    },
+
+    toPlayer: function()
+    {
+        if( me.game.player ) {
+            return new me.Vector2d(
+                me.game.player.pos.x
+                    + me.game.player.width / 2
+                    - this.pos.x - this.width / 2,
+                me.game.player.pos.y
+                    + me.game.player.height / 2
+                    - this.pos.y - this.height / 2
+            );
+        }
+        return;
     }
 });
 
@@ -282,23 +355,6 @@ var LineOfSight = me.ObjectEntity.extend({
     seen: function()
     {
         this.enemyParent.makeMad();
-    },
-
-    checkCollision: function( obj )
-    {
-        if( obj == me.game.player ) {
-            return this.parent( obj );
-        }
-        else if( obj.type == "enemy" )
-        {
-            console.log( "enemy los col????" );
-        }
-        return null;
-    },
-
-    onCollision: function() {
-        // why in the actual fuck does this get called all the goddamn time if ^^^^FFFF
-        //console.log( "player hit line of sight, los at " + this.pos.x + ", " + this.pos.y );
     },
 
     update: function()

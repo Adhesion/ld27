@@ -19,7 +19,7 @@ var Player = me.ObjectEntity.extend(
         this.setVelocity( this.origVelocity.x, this.origVelocity.y );
         this.origGravity = 0.3;
         this.gravity = this.origGravity;
-        this.setFriction( 0.25, 0.1 );
+        this.setFriction( 0.85, 0.1 );
         this.updateColRect( 11, 70, 9, 106 );
 
         this.hp = 3;
@@ -51,10 +51,17 @@ var Player = me.ObjectEntity.extend(
 
         this.followPos = new me.Vector2d( this.pos.x + this.centerOffsetX,
             this.pos.y + this.centerOffsetY );
-        this.renderable.addAnimation("Walk", [ 4, 5, 6, 7 ], 10 );
         this.renderable.addAnimation("Idle", [ 0 ], 100 );
-        this.renderable.addAnimation("ShootStun", [ 1, 2 ], 30 );
+        this.renderable.addAnimation("ShootStun", [ 1, 2, 1 ], 30 );
         this.renderable.addAnimation("Stunned", [ 3 ], 10 );
+        this.renderable.addAnimation("Walk", [ 4, 5, 6, 7 ], 10 );
+        this.renderable.addAnimation("JumpUp", [ 8 ], 10 );
+        this.renderable.addAnimation("JumpDown", [ 9 ], 10 );
+        this.renderable.addAnimation("Floating", [ 10, ], 10 );
+        this.renderable.addAnimation("FloatingUp", [ 11 ], 10 );
+        this.renderable.addAnimation("FloatingDown", [ 12 ], 10 );
+        this.renderable.addAnimation("SpaceStunned", [ 13 ], 10 );
+        this.renderable.addAnimation("SpaceShootStun", [ 14, 15 ], 30 );
 
         this.renderable.setCurrentAnimation( "Idle" );
 
@@ -92,13 +99,18 @@ var Player = me.ObjectEntity.extend(
         var envRes = this.updateMovement();
 
         // hit ground
-        if( envRes.y > 0 )
+        if( envRes.y > 0 && ! this.inSpace )
         {
             if ( lastFalling && !this.falling )
             {
                 this.doubleJumped = false;
+                this.renderable.setCurrentAnimation( "Idle" );
                 //me.audio.play( "step" );
             }
+        }
+        if( this.falling && ! lastFalling && ! this.inSpace && ! this.isPushed )
+        {
+            this.renderable.setCurrentAnimation("JumpDown");
         }
 
         // check collision against other objects
@@ -109,6 +121,7 @@ var Player = me.ObjectEntity.extend(
         }
         else if( this.inSpace )
         {
+            this.renderable.setCurrentAnimation( this.isPushed ? "Stunned" : "Idle" );
             this.inSpace = false;
             this.gravity = this.origGravity;
             this.setFriction( 0.25, 0.1 );
@@ -130,6 +143,7 @@ var Player = me.ObjectEntity.extend(
         if( !this.inSpace && colRes.obj.type == "space" )
         {
             // release him... into SPACE
+            this.renderable.setCurrentAnimation( "Floating" );
             this.gravity = 0;
             this.setFriction( 0.001, 0.001);
             this.inSpace = true;
@@ -169,12 +183,14 @@ var Player = me.ObjectEntity.extend(
             {
                 if ( !this.jumping && !this.falling )
                 {
+                    this.renderable.setCurrentAnimation("JumpUp");
                     this.doJump();
                     //me.audio.play( "jump" );
                 }
                 // double jump
                 else if ( this.haveDoubleJump && !this.doubleJumped )
                 {
+                    this.renderable.setCurrentAnimation("JumpUp");
                     this.forceJump();
                     this.doubleJumped = true;
                     //spawnParticle( this.pos.x, this.pos.y, "doublejump", 144,
@@ -186,42 +202,64 @@ var Player = me.ObjectEntity.extend(
             if ( me.input.isKeyPressed( "left" ) )
             {
                 this.doWalk( true );
-                this.renderable.setCurrentAnimation( "Walk", function() {
-                    self.renderable.setCurrentAnimation("Idle" );
-                });
+                if ( !this.jumping && !this.falling ) {
+                    this.renderable.setCurrentAnimation( "Walk", function() {
+                        self.renderable.setCurrentAnimation("Idle" );
+                    });
+                }
                 this.curWalkLeft = true;
             }
             else if ( me.input.isKeyPressed( "right" ) )
             {
                 this.doWalk( false );
-                this.renderable.setCurrentAnimation( "Walk", function() {
-                    self.renderable.setCurrentAnimation("Idle" );
-                });
+                if ( !this.jumping && !this.falling ) {
+                    this.renderable.setCurrentAnimation( "Walk", function() {
+                        self.renderable.setCurrentAnimation("Idle" );
+                    });
+                }
                 this.curWalkLeft = false;
             }
         }
         // i'm floating in a most peculiar way
         else
         {
-            var floatSpeed = 0.2;
-
+            var floatSpeed = 0.1;
+            var change = false;
             if( me.input.isKeyPressed( "up" ) )
             {
+                change = true;
                 this.vel.y -= floatSpeed * me.timer.tick;
             }
             if( me.input.isKeyPressed( "down" ) )
             {
+                change = true;
                 this.vel.y += floatSpeed * me.timer.tick;
             }
             if( me.input.isKeyPressed( "left" ) )
             {
+                change = true;
                 this.vel.x -= floatSpeed * me.timer.tick;
                 this.flipX( (this.curWalkLeft = true ));
             }
             if( me.input.isKeyPressed( "right" ) )
             {
+                change = true;
                 this.vel.x += floatSpeed * me.timer.tick;
                 this.flipX( (this.curWalkLeft = false ));
+            }
+
+            if( change ) {
+                var l = this.vel.length(),
+                    rx = this.vel.x/l,
+                    ry = this.vel.y/l;
+                if( Math.abs(ry) > Math.abs(rx) ) {
+                    this.renderable.setCurrentAnimation(
+                        ry < 0 ? "FloatingUp" : "FloatingDown"
+                   );
+                }
+                else {
+                    this.renderable.setCurrentAnimation( "Floating" );
+                }
             }
         }
 
@@ -301,9 +339,16 @@ var Player = me.ObjectEntity.extend(
     stun: function()
     {
         var self = this;
-        this.renderable.setCurrentAnimation( "ShootStun", function() {
-            self.renderable.setCurrentAnimation("Idle" );
-        });
+
+        self.renderable.setCurrentAnimation(
+            self.inSpace ? "SpaceShootStun" : "ShootStun",
+            function() {
+                self.renderable.setCurrentAnimation(
+                    self.inSpace ? "Floating" : "Idle"
+                );
+            }
+        );
+
         var posX = this.pos.x + (this.curWalkLeft ? -40 : 85),
             posY = this.pos.y + 52;
         var zap = new PlayerParticle(
@@ -331,12 +376,18 @@ var Player = me.ObjectEntity.extend(
         this.vel.x += 10.0 * vel.x;
         // flicker & set vel back to orig vel on end
         var self = this;
-        this.renderable.setCurrentAnimation( "Stunned" );
-        this.renderable.flicker( this.pushTimerMax, function() {
+        self.renderable.setCurrentAnimation(
+            self.inSpace ? "SpaceStunned" : "Stunned"
+        );
+        self.isPushed = true;
+        self.renderable.flicker( this.pushTimerMax, function() {
+            self.isPushed = false;
             self.setVelocity( self.origVelocity.x, self.origVelocity.y );
-            self.renderable.setCurrentAnimation( "Idle" );
+            self.renderable.setCurrentAnimation(
+                self.inSpace ? "Floating" : "Idle"
+            );
         });
-        this.pushTimer = this.pushTimerMax;
+        self.pushTimer = this.pushTimerMax;
     }
 
     /*updateStunPos: function()

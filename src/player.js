@@ -50,6 +50,12 @@ var Player = me.ObjectEntity.extend(
 
         this.followPos = new me.Vector2d( this.pos.x + this.centerOffsetX,
             this.pos.y + this.centerOffsetY );
+        this.renderable.addAnimation("Walk", [ 4, 5, 6, 7 ], 10 );
+        this.renderable.addAnimation("Idle", [ 0 ], 100 );
+        this.renderable.addAnimation("ShootStun", [ 1, 2 ], 10 );
+        this.renderable.addAnimation("Stunned", [ 4 ], 10 );
+
+        this.renderable.setCurrentAnimation( "Idle" );
 
         me.game.viewport.follow( this.followPos, me.game.viewport.AXIS.BOTH );
         me.game.viewport.setDeadzone( me.game.viewport.width / 10, 1 );
@@ -147,6 +153,7 @@ var Player = me.ObjectEntity.extend(
 
     checkInput: function()
     {
+        var self = this;
         // not in space
         if( !this.inSpace )
         {
@@ -171,11 +178,17 @@ var Player = me.ObjectEntity.extend(
             if ( me.input.isKeyPressed( "left" ) )
             {
                 this.doWalk( true );
+                this.renderable.setCurrentAnimation( "Walk", function() {
+                    self.renderable.setCurrentAnimation("Idle" );
+                });
                 this.curWalkLeft = true;
             }
             else if ( me.input.isKeyPressed( "right" ) )
             {
                 this.doWalk( false );
+                this.renderable.setCurrentAnimation( "Walk", function() {
+                    self.renderable.setCurrentAnimation("Idle" );
+                });
                 this.curWalkLeft = false;
             }
         }
@@ -281,9 +294,23 @@ var Player = me.ObjectEntity.extend(
 
     stun: function()
     {
-        var posX, posY;
-        posX = this.pos.x; posY = this.pos.y;
-        var curStun = new PlayerParticle( posX, posY, "jump", 48, [ 0, 1, 2, 3, 4, 5, 6, 7, 8 ], 4, "stun", false, this.curWalkLeft );
+        var self = this;
+        this.renderable.setCurrentAnimation( "ShootStun", function() {
+            self.renderable.setCurrentAnimation("Idle" );
+        });
+        var posX = this.pos.x + (this.curWalkLeft ? 0 : 70),
+            posY = this.pos.y + 50;
+        var curStun = new PlayerParticle(
+            posX,
+            posY,
+            "jump",
+            48,
+            [ 0, 1, 2, 3, 4, 5, 6, 7, 8 ],
+            4,
+            "stun",
+            false,
+            this.curWalkLeft
+        );
         curStun.vel.x = 5.0 * ( this.curWalkLeft ? -1.0 : 1.0 );
         me.game.add( curStun, 4 );
         me.game.sort();

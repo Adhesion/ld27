@@ -31,6 +31,9 @@ var jsApp = {
         me.entityPool.add( "laserbot", LaserBot );
         me.entityPool.add( "missilebot", MissileBot );
         me.entityPool.add( "zerogravity", ZeroGravityZone );
+
+        me.entityPool.add( "switch", Switch );
+        me.entityPool.add( "door", Door );
     }
 };
 
@@ -64,6 +67,7 @@ var PlayScreen = me.ScreenObject.extend(
         // this only gets called on start?
         me.levelDirector.loadLevel( level );
         me.game.sort();
+        this.doors = [];
     },
 
     // this will be called on state change -> this
@@ -78,6 +82,20 @@ var PlayScreen = me.ScreenObject.extend(
     {
         me.game.disableHUD();
         me.audio.stopTrack();
+    },
+
+    getDoor: function( doorID )
+    {
+        var index;
+        var ret;
+        for( index = 0; index < this.doors.length; index++ )
+        {
+            if( this.doors[index].doorID === doorID )
+            {
+                ret = this.doors[index];
+            }
+        }
+        return ret;
     }
 });
 

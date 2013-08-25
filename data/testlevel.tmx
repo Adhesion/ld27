@@ -43,8 +43,28 @@
  </layer>
  <objectgroup name="Entities" width="100" height="100">
   <object name="player" x="76" y="4353" width="193" height="183"/>
-  <object name="missilebot" x="685" y="4303" width="205" height="201"/>
+  <object name="missilebot" x="1108" y="4342" width="205" height="201"/>
   <object name="pusherbot" x="2330" y="4343" width="209" height="190"/>
   <object name="laserbot" x="1414" y="4311" width="205" height="201"/>
+  <object name="switch" x="414" y="4456" width="68" height="59">
+   <properties>
+    <property name="doorID" value="1"/>
+   </properties>
+  </object>
+  <object name="door" x="518" y="4360" width="67" height="177">
+   <properties>
+    <property name="doorID" value="1"/>
+   </properties>
+  </object>
+  <object name="door" x="762" y="4364" width="67" height="177">
+   <properties>
+    <property name="doorID" value="2"/>
+   </properties>
+  </object>
+  <object name="switch" x="649" y="4456" width="68" height="59">
+   <properties>
+    <property name="doorID" value="2"/>
+   </properties>
+  </object>
  </objectgroup>
 </map>

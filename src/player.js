@@ -150,6 +150,13 @@ var Player = me.ObjectEntity.extend(
             // DEAD, YOU ARE - DEAD
             colRes.obj.kill();
         }
+        if( colRes.obj.door ) {
+            // stop if we hit a door
+            this.vel.x = colRes.x ? 0 : this.vel.x;
+            this.vel.y = colRes.y ? 0 : this.vel.y;
+            this.pos.x -= colRes.x;
+            this.pos.y -= colRes.y;
+        }
     },
 
     checkInput: function()

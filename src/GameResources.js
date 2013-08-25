@@ -24,6 +24,11 @@ var GameResources = [
     { name: "stun",       type: "image", src: "data/stun.png"       },
     { name: "zap",        type: "image", src: "data/zap.png"        },
 
+    { name: "switch", type: "image", src: "data/switch.png" },
+    { name: "door", type: "image", src: "data/door.png" },
+
+    { name: "16x16_font", type: "image", src: "data/16x16_font.png" },
+
     { name: "collision_tiles", type: "image", src: "data/collision_tiles.png" },
 
     { name: "testlevel", type: "tmx", src: "data/testlevel.tmx"     },

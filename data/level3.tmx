@@ -153,6 +153,7 @@
   <object name="missilebot" x="1779" y="4997" width="96" height="96"/>
   <object name="missilebot" x="766" y="6775" width="129" height="129"/>
   <object name="missilebot" x="672" y="7105" width="129" height="129"/>
+  <object name="fox" x="3678" y="7898" width="195" height="163"/>
  </objectgroup>
  <layer name="foreground" width="110" height="200">
   <data encoding="base64">

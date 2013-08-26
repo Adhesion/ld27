@@ -49,7 +49,10 @@ var Enemy = me.ObjectEntity.extend({
 
         if( this.AIstate != "stunned" )
         {
-            this.renderable.setCurrentAnimation("Mad");
+            var self = this;
+            this.renderable.setCurrentAnimation("Mad", function() {
+                self.renderable.setCurrentAnimation("Charge");
+            });
             this.AIstate = "mad";
             this.madCounter = this.madCounterMax;
             this.setVelocity( this.madVelocity.x, this.madVelocity.y );
@@ -60,6 +63,7 @@ var Enemy = me.ObjectEntity.extend({
     {
         var self = this;
         if( self.renderable.isCurrentAnimation("Mad")
+            || self.renderable.isCurrentAnimation("Charge")
             || self.renderable.isCurrentAnimation("Shoot")
         ) {
             console.log("Calming????");

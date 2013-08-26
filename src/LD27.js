@@ -35,6 +35,8 @@ var jsApp = {
 
         me.entityPool.add( "switch", Switch );
         me.entityPool.add( "door", Door );
+
+        me.entityPool.add( "LevelChanger", LevelChanger );
     }
 };
 
@@ -167,4 +169,32 @@ var RadmarsScreen = me.ScreenObject.extend({
 
 window.onReady( function() {
     jsApp.onload();
+});
+
+/** WHen colliding with the end of the level do things to swap the levels. */
+var LevelChanger = me.LevelEntity.extend({
+    init: function( x, y, settings ) {
+        this.parent( x, y, settings );
+    },
+
+    onCollision : function()
+    {
+        this.collidable = false;
+        return this.parent();
+    },
+
+    /** Dirty hack. I don't think they intended to expose onFadeComplete. */
+    onFadeComplete : function () {
+        this.parent();
+        me.state.current().changeLevel( );
+    },
+
+    goTo: function ( level ) {
+        // hack bad. bad hack TODO
+        if ( this.gotolevel == "gameover" ) {
+            me.state.change( me.state.GAMEOVER );
+            return;
+        }
+        this.parent( level );
+    }
 });

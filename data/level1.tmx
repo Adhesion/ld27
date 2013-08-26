@@ -90,7 +90,7 @@
     <property name="to" value="level2"/>
    </properties>
   </object>
-  <object name="switch" x="8283" y="988" width="68" height="59">
+  <object name="switch" x="8303" y="1025" width="48" height="48">
    <properties>
     <property name="doorID" value="2"/>
    </properties>
@@ -102,7 +102,7 @@
   </object>
   <object name="zerogravity" type="zerogravity" x="8408" y="1003" width="1042" height="1245"/>
   <object name="zerogravity" type="zerogravity" x="9458" y="1614" width="639" height="630"/>
-  <object name="switch" x="10005" y="1157" width="68" height="59">
+  <object name="switch" x="10032" y="1217" width="48" height="48">
    <properties>
     <property name="doorID" value="3"/>
    </properties>

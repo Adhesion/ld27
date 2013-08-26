@@ -17,6 +17,7 @@ var Player = me.ObjectEntity.extend(
 
         this.origVelocity = new me.Vector2d( 7.0, 11.0 );
         this.setVelocity( this.origVelocity.x, this.origVelocity.y );
+        this.defaultMax = this.maxVel.clone();
         this.origGravity = 0.3;
         this.gravity = this.origGravity;
         this.setFriction( 0.85, 0.1 );
@@ -142,9 +143,10 @@ var Player = me.ObjectEntity.extend(
         else if( this.inSpace )
         {
             this.renderable.setCurrentAnimation( this.isPushed ? "Stunned" : "Idle" );
+            this.setMaxVelocity( this.defaultMax.x, this.defaultMax.y );
             this.inSpace = false;
             this.gravity = this.origGravity;
-            this.setFriction( 0.25, 0.1 );
+            this.setFriction( 0.85, 0.1 );
             this.spaceTimeDisplay = -1.0;
         }
 
@@ -185,6 +187,7 @@ var Player = me.ObjectEntity.extend(
             this.renderable.setCurrentAnimation( "Floating" );
             this.gravity = 0;
             this.setFriction( 0.001, 0.001);
+            this.setMaxVelocity( 8, 8 );
             this.inSpace = true;
             this.spaceTimerStart = me.timer.getTime();
         }
@@ -220,8 +223,11 @@ var Player = me.ObjectEntity.extend(
     checkInput: function()
     {
         var self = this;
-        // not in space
-        if( !this.inSpace )
+        if ( me.input.isKeyPressed( "jetpack" ) )
+        {
+            this.fireJetpack();
+        }
+        else if( !this.inSpace )
         {
             if ( me.input.isKeyPressed( "jump" ) )
             {
@@ -246,7 +252,7 @@ var Player = me.ObjectEntity.extend(
             if ( me.input.isKeyPressed( "left" ) )
             {
                 this.doWalk( true );
-                if ( !this.jumping && !this.falling ) {
+                if ( !this.jumping && !this.falling && !this.jetpacked ) {
                     this.renderable.setCurrentAnimation( "Walk", function() {
                         self.renderable.setCurrentAnimation("Idle" );
                     });
@@ -256,7 +262,7 @@ var Player = me.ObjectEntity.extend(
             else if ( me.input.isKeyPressed( "right" ) )
             {
                 this.doWalk( false );
-                if ( !this.jumping && !this.falling ) {
+                if ( !this.jumping && !this.falling && !this.jetpacked ) {
                     this.renderable.setCurrentAnimation( "Walk", function() {
                         self.renderable.setCurrentAnimation("Idle" );
                     });
@@ -307,11 +313,6 @@ var Player = me.ObjectEntity.extend(
             }
         }
 
-        // now try to jet pack by setting the speed to some constant.
-        if ( me.input.isKeyPressed( "jetpack" ) )
-        {
-            this.fireJetpack();
-        }
 
         if ( me.input.isKeyPressed( "stun" ) )
         {
@@ -352,30 +353,52 @@ var Player = me.ObjectEntity.extend(
         {
             this.jetpackCooldown -= 10;
             this.jetpacked = true;
-            this.vel.normalize();
-            var x = this.pos.x + 45,
-                y = this.pos.y + 80,
-                vx = this.vel.x,
-                vy = this.vel.y;
-            this.vel.x *= 10;
-            this.vel.y *= 10;
-
-            for( var p = 0; p < 10; p++ ) {
-            var curStun = new PlayerParticle( x, y, {
-                    spritewidth: 48,
-                    image:   "jump",
-                    collide: false,
-                    flip:    this.curWalkLeft,
-                    frames:  [ 0, 1, 2, 3, 4, 5, 6, 7, 8 ],
-                    speed:   4,
-                    type:    "stun"
-                });
-
-                curStun.vel.y = vy + Math.sin(p*Math.PI/5);
-                curStun.vel.x = vx + Math.cos(p*Math.PI/5);
-                me.game.add( curStun, 4 );
+            var nvx, nvy;
+            if( me.input.isKeyPressed( "up" ) ) {
+                nvy = -1;
             }
-            me.game.sort();
+            else if( me.input.isKeyPressed( "down" ) ) {
+                nvy = 1;
+            }
+            if( me.input.isKeyPressed( "right" ) ) {
+                nvx = 1;
+            }
+            else if( me.input.isKeyPressed( "left" ) ) {
+                nvx = -1;
+            }
+
+
+            if( nvx || nvy ) {
+                var x = this.pos.x + 45,
+                    y = this.pos.y + 80,
+                    vx = -this.vel.x / 10;
+                    vy = -this.vel.y / 10;
+
+                this.vel.x = nvx * 10;
+                this.vel.y = nvy * 10;
+
+                if( !this.inSpace ) {
+                    this.renderable.setCurrentAnimation("JumpUp");
+                }
+
+                for( var p = 0; p < 10; p++ ) {
+                    var curStun = new PlayerParticle( x, y, {
+                        spritewidth: 48,
+                        image:   "jump",
+                        collide: false,
+                        flip:    this.curWalkLeft,
+                        frames:  [ 0, 1, 2, 3, 4, 5, 6, 7, 8 ],
+                        speed:   4,
+                        type:    "stun"
+                    });
+
+                    curStun.vel.y = vy + Math.sin(p*Math.PI/5);
+                    curStun.vel.x = vx + Math.cos(p*Math.PI/5);
+                    me.game.add( curStun, 4 );
+                }
+
+                me.game.sort();
+            }
         }
         return available;
     },

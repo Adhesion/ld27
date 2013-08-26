@@ -43,6 +43,7 @@ var Enemy = me.ObjectEntity.extend({
     {
         if( this.AIstate != "stunned" )
         {
+            this.renderable.setCurrentAnimation("Mad");
             this.AIstate = "mad";
             this.madCounter = this.madCounterMax;
             this.setVelocity( this.madVelocity.x, this.madVelocity.y );
@@ -51,8 +52,22 @@ var Enemy = me.ObjectEntity.extend({
 
     makeIdle: function()
     {
+        var self = this;
+        if( self.renderable.isCurrentAnimation("Mad")
+            || self.renderable.isCurrentAnimation("Shoot")
+        ) {
+            console.log("Calming????");
+            this.renderable.setCurrentAnimation("Calm", function() {
+                console.log("walking!");
+                self.renderable.setCurrentAnimation("Walk");
+            });
+        }
+        else {
+            self.renderable.setCurrentAnimation("Walk");
+        }
         this.setVelocity( this.origVelocity.x, this.origVelocity.y );
         this.AIstate = "idle";
+
     },
 
     // what the robot does on idle
@@ -88,7 +103,7 @@ var Enemy = me.ObjectEntity.extend({
         else if( this.AIstate == "stunned" )
         {
             this.stunTimer--;
-            if( this.stunTimer == 0 )
+            if( this.stunTimer <= 0 )
             {
                 this.makeIdle();
             }
@@ -141,6 +156,13 @@ var PusherBot = Enemy.extend({
         settings.spritewidth  = settings.spritewidth  || 117;
         settings.spriteheight = settings.spriteheight || 114;
         this.parent( x, y, settings );
+        this.renderable.addAnimation("Idle", [0], 100 );
+        this.renderable.addAnimation("Walk", [0,1], 10 );
+        this.renderable.addAnimation("Mad",  [2,3,4,5,6,7], 10 );
+        this.renderable.addAnimation("Calm", [8,9,10], 10 );
+        this.renderable.addAnimation("Charge", [11,12], 10 );
+        this.renderable.addAnimation("Stunned", [13,14,15], 10 );
+        this.makeIdle();
     },
 
     patrol: function()
@@ -167,6 +189,7 @@ var PusherBot = Enemy.extend({
         {
             me.game.remove( res.obj );
             this.AIstate = "stunned";
+            this.renderable.setCurrentAnimation( "Stunned" );
             this.stunTimer = 600;
         }
     },
@@ -193,6 +216,14 @@ var LaserBot = Enemy.extend({
 
         this.laserCooldown = 0;
         this.laserCooldownMax = 50;
+        this.renderable.addAnimation("Idle", [0], 100 );
+        this.renderable.addAnimation("Walk", [0,1], 10 );
+        this.renderable.addAnimation("Mad",  [2,3,4,5,6,7,8,9], 10 );
+        this.renderable.addAnimation("Shoot", [9], 10 );
+        this.renderable.addAnimation("Calm", [10,11,12,13], 10 );
+        this.renderable.addAnimation("Stunned", [14,15,16], 10 );
+
+        this.makeIdle();
     },
 
     patrol: function()
@@ -293,6 +324,13 @@ var MissileBot = Enemy.extend({
 
         this.missileCooldown = 0;
         this.missileCooldownMax = 150;
+        this.renderable.addAnimation("Idle", [0], 100 );
+        this.renderable.addAnimation("Walk", [0], 10 );
+        this.renderable.addAnimation("Mad",  [1,2,3,4,5,6,7,8], 10 );
+        this.renderable.addAnimation("Calm", [9, 10, 11], 10 );
+        this.renderable.addAnimation("Stunned", [12,13,14], 10 );
+
+        this.makeIdle();
     },
 
     patrol: function()

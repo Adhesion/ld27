@@ -53,10 +53,14 @@ var Enemy = me.ObjectEntity.extend({
 
         if( this.AIstate != "stunned" )
         {
-            var self = this;
-            this.renderable.setCurrentAnimation("Mad", function() {
-                self.renderable.setCurrentAnimation("Charge");
-            });
+            if( this.AIstate != "mad" )
+            {
+                var self = this;
+                this.renderable.setCurrentAnimation("Mad", function() {
+                    self.renderable.setCurrentAnimation("Charge");
+                });
+            }
+
             this.AIstate = "mad";
             this.madCounter = this.madCounterMax;
             this.setVelocity( this.madVelocity.x, this.madVelocity.y );
@@ -275,11 +279,11 @@ var LaserBot = Enemy.extend({
         this.parent( x, y, settings );
 
         this.laserCooldown = 0;
-        this.laserCooldownMax = 300;
+        this.laserCooldownMax = 200;
         this.renderable.addAnimation("Idle", [0], 100 );
         this.renderable.addAnimation("Walk", [0,1], 10 );
         this.renderable.addAnimation("Mad",  [2,3,4,5,6,7,8,9], 10 );
-        this.renderable.addAnimation("Charge",  [2,3,4,5,6,7,8,9], 10 );
+        this.renderable.addAnimation("Charge",  [9], 10 );
         this.renderable.addAnimation("Shoot", [9], 10 );
         this.renderable.addAnimation("Calm", [10,11,12,13], 10 );
         this.renderable.addAnimation("Stunned", [14,15,16], 10 );
@@ -398,7 +402,7 @@ var MissileBot = Enemy.extend({
         this.renderable.addAnimation("Idle", [0], 100 );
         this.renderable.addAnimation("Walk", [0], 10 );
         this.renderable.addAnimation("Mad",  [1,2,3,4,5,6,7,8], 10 );
-        this.renderable.addAnimation("Charge",  [1,2,3,4,5,6,7,8], 10 );
+        this.renderable.addAnimation("Charge",  [8], 10 );
         this.renderable.addAnimation("Calm", [9, 10, 11], 10 );
         this.renderable.addAnimation("Stunned", [12,13,14], 10 );
 

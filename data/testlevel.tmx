@@ -66,5 +66,9 @@
     <property name="doorID" value="2"/>
    </properties>
   </object>
+  <object name="trash" x="213" y="4120" width="70" height="71"/>
+  <object name="trash" x="336" y="4183" width="70" height="71"/>
+  <object name="trash" x="170" y="3973" width="70" height="71"/>
+  <object name="trash" x="321" y="3997" width="70" height="71"/>
  </objectgroup>
 </map>

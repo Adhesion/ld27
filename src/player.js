@@ -242,6 +242,12 @@ var Player = me.ObjectEntity.extend(
             this.pos.x -= colRes.x;
             this.pos.y -= colRes.y;
         }
+        if( colRes.obj.type == "trash" )
+        {
+            if( this.hp < 3 ) this.hp++;
+            me.game.remove( colRes.obj );
+            me.audio.play( "pickup" );
+        }
     },
 
     checkInput: function()

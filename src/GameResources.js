@@ -24,6 +24,8 @@ var GameResources = [
     { name: "stun",       type: "image", src: "data/stun.png"       },
     { name: "zap",        type: "image", src: "data/zap.png"        },
 
+    { name: "trash",        type: "image", src: "data/trash.png"        },
+
     { name: "switch", type: "image", src: "data/switch.png" },
     { name: "door", type: "image", src: "data/door.png" },
 

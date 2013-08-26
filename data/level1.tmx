@@ -57,7 +57,7 @@
   <object name="zerogravity" type="zerogravity" x="6227" y="1423" width="802" height="1762"/>
   <object name="zerogravity" type="zerogravity" x="7039" y="2247" width="3050" height="922"/>
   <object name="zerogravity" type="zerogravity" x="8410" y="580" width="1675" height="436"/>
-  <object name="pusherbot" x="4310" y="3028" width="129" height="129"/>
+  <object name="pusherbot" x="4249" y="3028" width="129" height="129"/>
   <object name="laserbot" x="5522" y="1788" width="117" height="125"/>
   <object name="LevelChanger" x="10501" y="631" width="291" height="180">
    <properties>

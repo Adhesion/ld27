@@ -21,6 +21,11 @@ var Switch = me.ObjectEntity.extend({
             throw "Must set doorID for switch";
         }
 
+        if( settings.flip )
+        {
+            this.flipX( true );
+        }
+
         this.parent( x, y, settings );
 
         this.flipped = false;

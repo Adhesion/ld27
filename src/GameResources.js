@@ -20,6 +20,7 @@ var GameResources = [
     { name: "player",     type: "image", src: "data/janitor.png"    },
     { name: "pusherbot",  type: "image", src: "data/taser.png"      },
     { name: "robut",      type: "image", src: "data/robut.png"      },
+    { name: "fox",        type: "image", src: "data/player.png"      },
 
     { name: "stun",       type: "image", src: "data/stun.png"       },
     { name: "zap",        type: "image", src: "data/zap.png"        },

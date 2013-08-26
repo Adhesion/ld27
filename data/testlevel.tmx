@@ -45,7 +45,7 @@
   <object name="player" x="76" y="4353" width="193" height="183"/>
   <object name="missilebot" x="1108" y="4342" width="205" height="201"/>
   <object name="pusherbot" x="2330" y="4343" width="209" height="190"/>
-  <object name="laserbot" x="1414" y="4311" width="205" height="201"/>
+  <object name="laserbot" x="2029" y="4336" width="205" height="201"/>
   <object name="switch" x="414" y="4456" width="68" height="59">
    <properties>
     <property name="doorID" value="1"/>
@@ -70,5 +70,6 @@
   <object name="trash" x="336" y="4183" width="70" height="71"/>
   <object name="trash" x="170" y="3973" width="70" height="71"/>
   <object name="trash" x="321" y="3997" width="70" height="71"/>
+  <object name="fox" x="1480" y="4327" width="205" height="201"/>
  </objectgroup>
 </map>

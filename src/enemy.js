@@ -552,3 +552,30 @@ var LineOfSight = me.ObjectEntity.extend({
         return true;
     }
 });
+
+var Fox = PusherBot.extend({
+    init: function( x, y, settings, enemyParent )
+    {
+        settings.image        = settings.image        || 'fox';
+        settings.spritewidth  = settings.spritewidth  || 144;
+        settings.spriteheight = settings.spriteheight || 144;
+        this.parent( x, y, settings );
+
+        this.renderable.addAnimation("Idle", [0,1,2,3], 5 );
+        this.renderable.addAnimation("Walk", [7,8,9,10], 4 );
+        this.renderable.addAnimation("Mad",  [7,8,9,10], 10 );
+        this.renderable.addAnimation("Calm", [0,1,2,3], 10 );
+        this.renderable.addAnimation("Charge", [11], 10 );
+        this.renderable.addAnimation("Stunned", [15], 10 );
+        this.makeIdle();
+
+        this.updateColRect( 44, 88, 59, 76 );
+
+        this.type = "fox";
+    },
+
+    onCollision: function( res, obj )
+    {
+
+    }
+});

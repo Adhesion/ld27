@@ -279,6 +279,7 @@ var LaserBot = Enemy.extend({
         this.renderable.addAnimation("Idle", [0], 100 );
         this.renderable.addAnimation("Walk", [0,1], 10 );
         this.renderable.addAnimation("Mad",  [2,3,4,5,6,7,8,9], 10 );
+        this.renderable.addAnimation("Charge",  [2,3,4,5,6,7,8,9], 10 );
         this.renderable.addAnimation("Shoot", [9], 10 );
         this.renderable.addAnimation("Calm", [10,11,12,13], 10 );
         this.renderable.addAnimation("Stunned", [14,15,16], 10 );
@@ -397,6 +398,7 @@ var MissileBot = Enemy.extend({
         this.renderable.addAnimation("Idle", [0], 100 );
         this.renderable.addAnimation("Walk", [0], 10 );
         this.renderable.addAnimation("Mad",  [1,2,3,4,5,6,7,8], 10 );
+        this.renderable.addAnimation("Charge",  [1,2,3,4,5,6,7,8], 10 );
         this.renderable.addAnimation("Calm", [9, 10, 11], 10 );
         this.renderable.addAnimation("Stunned", [12,13,14], 10 );
 
@@ -471,10 +473,12 @@ var Missile = PlayerParticle.extend({
         if( Math.abs(distance.y) > 20.0 ) this.vel.y += (distance.y * 0.0005 + (Math.random()*0.5 - 0.25));
         this.renderable.angle = Math.atan2( distance.y, distance.x );
 
-        var res = this.updateMovement();
-        if( res.x != 0 || res.y != 0 )
-        {
-            this.kill();
+        var res;
+        if( res = this.updateMovement() ) {
+            if( res.x != 0 || res.y != 0 )
+            {
+                this.kill();
+            }
         }
 
         this.life--;

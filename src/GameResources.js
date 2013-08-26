@@ -62,5 +62,8 @@ var GameResources = [
 
     { name: "testlevel", type: "tmx", src: "data/testlevel.tmx"     },
     { name: "gravity",   type: "tmx", src: "data/gravity_level.tmx" },
-    { name: "level1",    type: "tmx", src: "data/level1.tmx"        }
+    { name: "level1",    type: "tmx", src: "data/level1.tmx"        },
+    { name: "level2",    type: "tmx", src: "data/level2.tmx"        },
+    { name: "level3",    type: "tmx", src: "data/level3.tmx"        }
+
 ];

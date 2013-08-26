@@ -278,10 +278,12 @@ var Player = me.ObjectEntity.extend(
             if( this.hp < 3 ) this.hp++;
             me.game.remove( colRes.obj );
             me.audio.play( "pickup" );
+            me.game.trashCount++;
         }
 		
 		if( colRes.obj.type == "pod" )
         {
+            me.game.goodEnding = true;
 			me.state.change( me.state.GAMEOVER );
 		}
     },

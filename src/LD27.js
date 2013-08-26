@@ -49,7 +49,7 @@ var PlayScreen = me.ScreenObject.extend(
 {
     init: function()
     {
-
+        me.game.trashCount = 0;
     },
 
     getLevel: function()
@@ -185,21 +185,41 @@ var GameOverScreen = me.ScreenObject.extend(
     init: function()
     {
         this.parent( true );
+        this.font = new me.BitmapFont("32x32_font", 32);
+        this.font.set( "left" );
     },
     
     onResetEvent: function()
     {
         if ( !this.background )
         {
-            this.background = me.loader.getImage( "gameover" );
+            if( me.game.goodEnding )
+            {
+                this.background = me.loader.getImage( "gameover" );
+                me.audio.stopTrack();
+                me.audio.play( "intro" );
+            }
+            else
+            {
+                this.background = me.loader.getImage( "gameover" );
+                me.audio.stopTrack();
+                me.audio.play( "intro" );
+            }
         }
-        me.audio.stopTrack();
-        me.audio.play( "intro" );
     },
     
     draw: function( context, x, y )
     {
         context.drawImage( this.background, 0, 0 );
+        if( me.game.goodEnding )
+        {
+            this.font.draw(
+                context,
+                "" + me.game.trashCount,
+                412,
+                372
+            );
+        }
     }
 });
 

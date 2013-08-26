@@ -651,7 +651,7 @@ var Fox = PusherBot.extend({
 
     makeMad: function()
     {
-        
+
     },
 
     onCollision: function( res, obj )

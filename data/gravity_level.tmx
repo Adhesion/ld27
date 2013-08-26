@@ -31,7 +31,7 @@
   <object name="trash" x="803" y="159" width="67" height="61"/>
   <object name="LevelChanger" x="921" y="55" width="176" height="145">
    <properties>
-    <property name="to" value="testlevel"/>
+    <property name="to" value="level3"/>
    </properties>
   </object>
  </objectgroup>

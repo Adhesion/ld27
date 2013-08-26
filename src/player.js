@@ -86,6 +86,7 @@ var Player = me.ObjectEntity.extend(
     {
         this.hp -= dmg;
         me.audio.play( "hit" );
+        this.renderable.flicker( 100 );
         if( this.hp <= 0 )
             this.die();
     },
@@ -94,6 +95,7 @@ var Player = me.ObjectEntity.extend(
     {
         me.audio.play( "death" );
         var duration = 1000;
+        this.spaceTimeDisplay = -1.0;
         this.renderable.flicker( duration );
         var fade = '#000000';
         me.game.viewport.fadeIn( fade, duration, function() {
@@ -153,7 +155,8 @@ var Player = me.ObjectEntity.extend(
             this.spaceTimeDisplay = -1.0;
         }
 
-        this.updateSpaceTime();
+        if( this.hp > 0 )
+            this.updateSpaceTime();
 
         if( this.stunCooldown > 0 ) this.stunCooldown--;
         if( this.jetpackCooldown < this.jetpackCooldownMax && !this.jetpacked ) this.jetpackCooldown += 1;
@@ -189,8 +192,11 @@ var Player = me.ObjectEntity.extend(
 
             if( this.spaceTimeDisplay <= 0 ) {
                 this.spaceTimeDisplay = 0;
-                this.hp = 0;
-                this.die();
+                if( this.hp > 0 )
+                {
+                    this.spaceTimerStart = me.timer.getTime();
+                    this.hit(1);
+                }
             }
         }
 
@@ -433,6 +439,7 @@ var Player = me.ObjectEntity.extend(
             return;
         }
         self.stunning = true;
+
 
         self.renderable.setCurrentAnimation(
             self.inSpace ? "SpaceShootStun" : "ShootStun",

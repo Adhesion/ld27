@@ -434,9 +434,9 @@ var MissileBot = Enemy.extend({
     fire: function()
     {
         this.missileCooldown = this.missileCooldownMax;
-        var posX = this.pos.x + this.width + 10; var posY = this.pos.y;
+        var posX = this.pos.x + 18; var posY = this.pos.y + 10;
         if( !this.walkRight )
-            posX = this.pos.x - 38;
+            posX = this.pos.x + 48;
         var frames = [ 0 ];
         var left = new Missile( posX, posY, {
             image: "missile",

@@ -297,7 +297,7 @@ var Player = me.ObjectEntity.extend(
         // i'm floating in a most peculiar way
         else
         {
-            var floatSpeed = 0.1;
+            var floatSpeed = 0.2;
             var change = false;
             if( me.input.isKeyPressed( "up" ) )
             {

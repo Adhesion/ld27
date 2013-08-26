@@ -195,7 +195,7 @@ var GameOverScreen = me.ScreenObject.extend(
         {
             if( me.game.goodEnding )
             {
-                this.background = me.loader.getImage( "gameover" );
+                this.background = me.loader.getImage( "gameover_good" );
                 me.audio.stopTrack();
                 me.audio.play( "intro" );
             }
@@ -211,15 +211,12 @@ var GameOverScreen = me.ScreenObject.extend(
     draw: function( context, x, y )
     {
         context.drawImage( this.background, 0, 0 );
-        if( me.game.goodEnding )
-        {
-            this.font.draw(
-                context,
-                "" + me.game.trashCount,
-                412,
-                372
-            );
-        }
+        this.font.draw(
+            context,
+            "" + me.game.trashCount,
+            412,
+            382
+        );
     }
 });
 

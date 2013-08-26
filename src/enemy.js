@@ -472,7 +472,7 @@ var Missile = PlayerParticle.extend({
         this.renderable.angle = Math.atan2( distance.y, distance.x );
 
         var res = this.updateMovement();
-        if( res.x != 0 || res.y != 0 )
+        if( res && ( res.x != 0 || res.y != 0 ) )
         {
             this.kill();
         }

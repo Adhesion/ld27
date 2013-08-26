@@ -436,7 +436,7 @@ var Player = me.ObjectEntity.extend(
                 frames: [ 0, 1, 2, 3, 4 ],
                 speed: 4,
                 type: "stun",
-                collide: flse,
+                collide: false,
                 flip: this.curWalkLeft,
                 callback: function() {
                     self.stunning = false;

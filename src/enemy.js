@@ -195,11 +195,13 @@ var PusherBot = Enemy.extend({
     onCollision: function( res, obj )
     {
         this.parent( res, obj );
-        // res check is to make sure the enemy is facing the player
-        if ( obj == me.game.player && (res.x < 0 != this.vel.x < 0) )
-        {
-            me.game.player.pushed( this.vel );
-            //me.audio.play( "push" );
+        if( this.AIstate != "stunned" ) {
+            // res check is to make sure the enemy is facing the player
+            if ( obj == me.game.player && (res.x < 0 != this.vel.x < 0) )
+            {
+                me.game.player.pushed( this.vel );
+                //me.audio.play( "push" );
+            }
         }
     }
 });

@@ -85,6 +85,7 @@ var PlayScreen = me.ScreenObject.extend(
     onResetEvent: function()
     {
         me.game.addHUD( 0, 0, me.video.getWidth(), me.video.getHeight() );
+		me.game.HUD.addItem( "hp", new HPDisplay( 700, 10 ) );
         // Some HUD shit here?
         this.startLevel( location.hash.substr(1) || "level1" );
     },
@@ -107,6 +108,31 @@ var PlayScreen = me.ScreenObject.extend(
             }
         }
         return ret;
+    }
+});
+
+var HPDisplay = me.HUD_Item.extend(
+{
+    init: function( x, y )
+    {	
+		this.parent( x, y );
+		this.hpIcon = me.loader.getImage("heart");
+    },
+    
+    draw: function( context, x, y )
+    {
+		var player = me.game.player;//me.game.getEntityByName("player")[0];
+		
+		if( player ){
+			var offsetX = 0;  
+			var offsetY = 0; 
+			
+			for (var i=0; i<player.hp; i++){
+				context.drawImage( this.hpIcon, this.pos.x + x + offsetX, this.pos.y + y + offsetY );
+				offsetX-=48;
+			}
+		}
+	
     }
 });
 

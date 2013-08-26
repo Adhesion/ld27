@@ -55,7 +55,7 @@ var Player = me.ObjectEntity.extend(
         this.followPos = new me.Vector2d( this.pos.x + this.centerOffsetX,
             this.pos.y + this.centerOffsetY );
         this.renderable.addAnimation("Idle", [ 0 ], 100 );
-        this.renderable.addAnimation("ShootStun", [ 1, 2, 1 ], 10 );
+        this.renderable.addAnimation("ShootStun", [ 1, 1, 2, 1 ], 10 );
         this.renderable.addAnimation("Stunned", [ 3 ], 10 );
         this.renderable.addAnimation("Walk", [ 4, 5, 6, 7 ], 10 );
         this.renderable.addAnimation("JumpUp", [ 8 ], 10 );
@@ -77,7 +77,7 @@ var Player = me.ObjectEntity.extend(
         me.input.bindKey( me.input.KEY.RIGHT, "right" );
         me.input.bindKey( me.input.KEY.X, "jump", true );
         me.input.bindKey( me.input.KEY.C, "jetpack", true );
-        me.input.bindKey( me.input.KEY.V, "stun" );
+        me.input.bindKey( me.input.KEY.V, "stun", true );
 
         me.game.player = this;
     },
@@ -411,6 +411,10 @@ var Player = me.ObjectEntity.extend(
     stun: function()
     {
         var self = this;
+        if( self.stunning || self.renderable.isCurrentAnimation( self.inSpace ? "SpaceShootStun" : "ShootStun" ) ) {
+            return;
+        }
+        self.stunning = true;
 
         self.renderable.setCurrentAnimation(
             self.inSpace ? "SpaceShootStun" : "ShootStun",
@@ -433,7 +437,10 @@ var Player = me.ObjectEntity.extend(
                 speed: 4,
                 type: "zap",
                 collide: false,
-                flip: this.curWalkLeft
+                flip: this.curWalkLeft,
+                callback: function() {
+                    self.stunning = false;
+                }
             }
         );
         zap.vel = this.vel;
@@ -495,6 +502,9 @@ var PlayerParticle = me.ObjectEntity.extend(
             var self = this;
             this.renderable.setCurrentAnimation( "play", function() {
                 me.game.remove( self, true );
+                if( settings.callback ) {
+                    settings.callback();
+                }
                 return false;
             });
         }

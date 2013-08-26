@@ -61,6 +61,7 @@ var GameResources = [
     { name: "level3", type: "audio", src: "data/", channels : 2 },
 
     { name: "16x16_font", type: "image", src: "data/16x16_font.png" },
+    { name: "16x16_font_blue", type: "image", src: "data/16x16_font_blue.png" },
     { name: "32x32_font", type: "image", src: "data/32x32_font.png" },
     { name: "64x64_font", type: "image", src: "data/64x64_font.png" },
 

@@ -87,6 +87,7 @@ var Enemy = me.ObjectEntity.extend({
         this.AIstate = "idle";
 
         this.charging = false;
+        this.chargeCounter = 0;
     },
 
     // what the robot does on idle
@@ -169,7 +170,28 @@ var Enemy = me.ObjectEntity.extend({
 
     collisionHandler: function( res )
     {
+        if( this.AIstate != "stunned" && res.obj.type == "stun" )
+        {
+            this.staticparticle = new PlayerParticle( this.pos.x, this.pos.y, {
+                image: "stun",
+                spritewidth: 96,
+                frames: [ 0, 1, 2, 3 ],
+                speed: 10,
+                type: "wibble",
+                collide: false,
+                noRemove: true
+            }),
 
+                me.game.add( this.staticparticle, 4 );
+            me.game.sort();
+
+            this.AIstate = "stunned";
+            this.renderable.setCurrentAnimation( "Stunned" );
+            this.stunTimer = 600;
+            this.charging = false;
+            this.chargeCounter = 0;
+            me.audio.play( "robotstunned" );
+        }
     },
 
     updateLOSPOS: function( lastWalkRight )
@@ -225,30 +247,6 @@ var PusherBot = Enemy.extend({
     {
         this.walkRight = !(this.pos.x > me.game.player.pos.x);
         this.doWalk( !this.walkRight );
-    },
-
-    collisionHandler: function( res )
-    {
-        if( this.AIstate != "stunned" && res.obj.type == "stun" )
-        {
-            this.staticparticle = new PlayerParticle( this.pos.x, this.pos.y, {
-                image: "stun",
-                spritewidth: 96,
-                frames: [ 0, 1, 2, 3 ],
-                speed: 10,
-                type: "wibble",
-                collide: false,
-                noRemove: true
-            }),
-
-            me.game.add( this.staticparticle, 4 );
-            me.game.sort();
-
-            this.AIstate = "stunned";
-            this.renderable.setCurrentAnimation( "Stunned" );
-            this.stunTimer = 600;
-            me.audio.play( "robotstunned" );
-        }
     },
 
     onCollision: function( res, obj )

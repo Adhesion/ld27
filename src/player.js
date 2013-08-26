@@ -395,7 +395,7 @@ var Player = me.ObjectEntity.extend(
                     flip:    this.curWalkLeft,
                     frames:  [ 0, 1, 2, 3, 4, 5, 6, 7, 8 ],
                     speed:   4,
-                    type:    "stun"
+                    type:    "smoke"
                 });
 
                 curStun.vel.y = vy + Math.sin(p*Math.PI/5);
@@ -436,7 +436,7 @@ var Player = me.ObjectEntity.extend(
                 frames: [ 0, 1, 2, 3, 4 ],
                 speed: 4,
                 type: "stun",
-                collide: false,
+                collide: flse,
                 flip: this.curWalkLeft,
                 callback: function() {
                     self.stunning = false;

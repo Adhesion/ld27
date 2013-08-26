@@ -75,7 +75,8 @@ var GameResources = [
     { name: "intro", type: "image", src: "data/intro.png" },
     { name: "introcta", type: "image", src: "data/introcta.png" },
     { name: "gameover", type: "image", src: "data/gameover.png" },
-
+    { name: "gameover_good", type: "image", src: "data/gameover_good.png" },
+	
     { name: "testlevel", type: "tmx", src: "data/testlevel.tmx"     },
     { name: "gravity",   type: "tmx", src: "data/gravity_level.tmx" },
     { name: "level1",    type: "tmx", src: "data/level1.tmx"        },

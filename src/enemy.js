@@ -115,10 +115,8 @@ var Enemy = me.ObjectEntity.extend({
 
         this.updateLOSPOS( lastWalkRight );
 
-        var move = ( this.vel.x || this.vel.y );
-        if ( move )
-            this.parent( this );
-        return move;
+        this.parent( this );
+        return true;
     },
 
     collisionHandler: function( res )

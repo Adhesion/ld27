@@ -52,6 +52,7 @@ var Door = me.ObjectEntity.extend({
         this.collidable = false;
         this.renderable.alpha = 0.0;
         //this.renderable.setCurrentAnimation( "open" );
+        me.audio.play( "dooropen" );
     },
 
     close: function()
@@ -59,6 +60,7 @@ var Door = me.ObjectEntity.extend({
         this.collidable = true;
         this.renderable.alpha = 1.0;
         //this.renderable.setCurrentAnimation( "closed" );
+        me.audio.play( "doorclose" );
     },
 
     updateTimer: function()

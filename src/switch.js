@@ -46,6 +46,7 @@ var Switch = me.ObjectEntity.extend({
             me.game.viewport.shake(10, 10, me.game.viewport.AXIS.BOTH);
             this.flipped = true;
             this.renderable.setCurrentAnimation( "on" );
+            me.audio.play( "switch" );
         }
     },
 

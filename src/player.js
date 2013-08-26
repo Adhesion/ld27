@@ -85,17 +85,18 @@ var Player = me.ObjectEntity.extend(
     hit: function( dmg )
     {
         this.hp -= dmg;
+        me.audio.play( "hit" );
         if( this.hp <= 0 )
             this.die();
     },
 
     die: function()
     {
-        var duration = 2000;
+        me.audio.play( "death" );
+        var duration = 1000;
         this.renderable.flicker( duration );
         var fade = '#000000';
-        //me.audio.play( "death" );
-        me.game.viewport.fadeOut( fade, duration, function() {
+        me.game.viewport.fadeIn( fade, duration, function() {
             me.state.current().startLevel( me.levelDirector.getCurrentLevelId() );
         });
     },
@@ -126,7 +127,7 @@ var Player = me.ObjectEntity.extend(
                 {
                     this.doubleJumped = false;
                     this.renderable.setCurrentAnimation( "Idle" );
-                    //me.audio.play( "step" );
+                    me.audio.play( "step" );
                 }
             }
         }
@@ -161,6 +162,20 @@ var Player = me.ObjectEntity.extend(
         this.followPos.x = this.pos.x + this.centerOffsetX;
         this.followPos.y = this.pos.y + this.centerOffsetY;
 
+        // hack to get current frame
+        if ( this.renderable.isCurrentAnimation( "Walk" ) )
+        {
+            if ( this.renderable.current.idx == 0 || this.renderable.current.idx == 2 )
+            {
+                this.stepped = false;
+            }
+            else if ( ( this.renderable.current.idx == 1 || this.renderable.current.idx == 3 ) && !this.stepped )
+            {
+                me.audio.play( "step" );
+                this.stepped = true;
+            }
+        }
+
         this.parent( this );
         return true;
     },
@@ -174,6 +189,7 @@ var Player = me.ObjectEntity.extend(
 
             if( this.spaceTimeDisplay <= 0 ) {
                 this.spaceTimeDisplay = 0;
+                this.hp = 0;
                 this.die();
             }
         }
@@ -237,7 +253,7 @@ var Player = me.ObjectEntity.extend(
                 {
                     this.renderable.setCurrentAnimation("JumpUp");
                     this.doJump();
-                    //me.audio.play( "jump" );
+                    me.audio.play( "jump" );
                 }
                 // double jump
                 else if ( this.haveDoubleJump && !this.doubleJumped )
@@ -247,7 +263,7 @@ var Player = me.ObjectEntity.extend(
                     this.doubleJumped = true;
                     //spawnParticle( this.pos.x, this.pos.y, "doublejump", 144,
                     //    [ 0, 1, 2, 3, 4, 5 ], 3, this.z + 1 );
-                    //me.audio.play( "doublejump" );
+                    me.audio.play( "jump" );
                 }
             }
 
@@ -404,6 +420,8 @@ var Player = me.ObjectEntity.extend(
             }
 
             me.game.sort();
+
+            me.audio.play( "jetpack" );
         }
         return available;
     },
@@ -446,7 +464,7 @@ var Player = me.ObjectEntity.extend(
         zap.vel = this.vel;
         me.game.add( zap, 4 );
         me.game.sort();
-        //me.audio.play( "stun" );
+        me.audio.play( "stun" );
     },
 
     pushed: function( vel )

@@ -41,6 +41,12 @@ var Enemy = me.ObjectEntity.extend({
 
     makeMad: function()
     {
+        // only play sound if not mad already
+        if( this.AIstate == "idle" )
+        {
+            me.audio.play( "robotopen" );
+        }
+
         if( this.AIstate != "stunned" )
         {
             this.renderable.setCurrentAnimation("Mad");
@@ -163,6 +169,16 @@ var PusherBot = Enemy.extend({
         this.makeIdle();
     },
 
+    makeMad: function()
+    {
+        // only play sound if not mad already
+        if( this.AIstate == "idle" )
+        {
+            me.audio.play( "intruder" );
+        }
+        this.parent();
+    },
+
     patrol: function()
     {
         this.walkCounter++;
@@ -189,6 +205,7 @@ var PusherBot = Enemy.extend({
             this.AIstate = "stunned";
             this.renderable.setCurrentAnimation( "Stunned" );
             this.stunTimer = 600;
+            me.audio.play( "robotstunned" );
         }
     },
 
@@ -199,7 +216,7 @@ var PusherBot = Enemy.extend({
         if ( obj == me.game.player && (res.x < 0 != this.vel.x < 0) )
         {
             me.game.player.pushed( this.vel );
-            //me.audio.play( "push" );
+            me.audio.play( "robotstun" );
         }
     }
 });
@@ -213,7 +230,7 @@ var LaserBot = Enemy.extend({
         this.parent( x, y, settings );
 
         this.laserCooldown = 0;
-        this.laserCooldownMax = 50;
+        this.laserCooldownMax = 300;
         this.renderable.addAnimation("Idle", [0], 100 );
         this.renderable.addAnimation("Walk", [0,1], 10 );
         this.renderable.addAnimation("Mad",  [2,3,4,5,6,7,8,9], 10 );
@@ -237,6 +254,9 @@ var LaserBot = Enemy.extend({
 
     fireLasers: function()
     {
+        me.audio.play( "charging" );
+        me.audio.play( "laserfire" );
+
         var posX = this.pos.x - 245; var posY = this.pos.y + 44;
         var width = 285; var height = 39;
         var z = this.z + 1;
@@ -320,6 +340,7 @@ var MissileBot = Enemy.extend({
         settings.spriteheight = settings.spriteheight || 96;
         this.parent( x, y, settings );
 
+        this.gravity = 0;
         this.missileCooldown = 0;
         this.missileCooldownMax = 150;
         this.renderable.addAnimation("Idle", [0], 100 );
@@ -329,6 +350,16 @@ var MissileBot = Enemy.extend({
         this.renderable.addAnimation("Stunned", [12,13,14], 10 );
 
         this.makeIdle();
+    },
+
+    makeMad: function()
+    {
+        // only play sound if not mad already
+        if( this.AIstate == "idle" )
+        {
+            me.audio.play( "destroy" );
+        }
+        this.parent();
     },
 
     patrol: function()
@@ -359,6 +390,7 @@ var MissileBot = Enemy.extend({
         });
         me.game.add( left, this.z + 1 );
         me.game.sort();
+        me.audio.play( "missilefire" );
     },
 
     update: function()
@@ -403,6 +435,7 @@ var Missile = PlayerParticle.extend({
     {
         this.collidable = false;
         me.game.remove( this );
+        me.audio.play( "explosion" );
     },
 
     toPlayer: function()

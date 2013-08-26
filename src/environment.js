@@ -7,6 +7,14 @@ var ZeroGravityZone = me.ObjectEntity.extend({
     }
 });
 
+var PodZone = me.ObjectEntity.extend({
+    init: function( x, y, settings ) {
+        this.parent( x, y, settings );
+        this.collidable = true;
+        this.type = 'pod';
+    }
+});
+
 var Trash = me.ObjectEntity.extend({
     init: function( x, y, settings ) {
         settings.image        = settings.image        || 'trash';

@@ -27,9 +27,11 @@ var GameResources = [
 
     { name: "trash",      type: "image", src: "data/trash.png"      },
     { name: "explode",    type: "image", src: "data/explode.png"    },
-
+    { name: "missileSmoke",    type: "image", src: "data/missileSmoke.png"    },
+	
     { name: "switch", type: "image", src: "data/switch.png" },
     { name: "door", type: "image", src: "data/door.png" },
+    { name: "heart", type: "image", src: "data/heart.png" },
 
     { name: "beep", type: "audio", src: "data/", channels : 2 },
     { name: "charging", type: "audio", src: "data/", channels : 2 },
@@ -67,6 +69,12 @@ var GameResources = [
     { name: "bg1", type: "image", src: "data/bg1.png" },
     { name: "bg2", type: "image", src: "data/bg2.png" },
     { name: "bg3", type: "image", src: "data/bg3.png" },
+    { name: "mapshit1", type: "image", src: "data/mapshit1.png" },
+    { name: "mapshit2", type: "image", src: "data/mapshit2.png" },
+	
+    { name: "intro", type: "image", src: "data/intro.png" },
+    { name: "introcta", type: "image", src: "data/introcta.png" },
+    { name: "gameover", type: "image", src: "data/gameover.png" },
 
     { name: "testlevel", type: "tmx", src: "data/testlevel.tmx"     },
     { name: "gravity",   type: "tmx", src: "data/gravity_level.tmx" },

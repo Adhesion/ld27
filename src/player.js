@@ -31,9 +31,12 @@ var Player = me.ObjectEntity.extend(
 
         this.stunCooldown = 0;
         this.stunCooldownMax = 30;
-
+		
+		this.hitCooldown = 0; 
+		this.hitCooldownMax = 60;
+	
         this.pushTimer = 0;
-        this.pushTimerMax = 60;
+        this.pushTimerMax = 50;
 
         // this is mostly broken/unused i think
         this.jetpackCooldownMax = 60;
@@ -79,19 +82,29 @@ var Player = me.ObjectEntity.extend(
         me.input.bindKey( me.input.KEY.LEFT, "left" );
         me.input.bindKey( me.input.KEY.RIGHT, "right" );
         me.input.bindKey( me.input.KEY.X, "jump", true );
-        me.input.bindKey( me.input.KEY.C, "jetpack", true );
-        me.input.bindKey( me.input.KEY.V, "stun", true );
+		
+		//removed jetpack in normal mode, jump jets in space. 
+        //me.input.bindKey( me.input.KEY.C, "jetpack", true );
+        me.input.bindKey( me.input.KEY.C, "stun", true );
 
         me.game.player = this;
     },
 
     hit: function( dmg )
     {
-        this.hp -= dmg;
-        me.audio.play( "hit" );
-        this.renderable.flicker( 100 );
-        if( this.hp <= 0 )
-            this.die();
+		if( this.hitCooldown <=0 ){ 
+			hitCooldown = this.hitCooldownMax; 
+			this.hp -= dmg;
+			me.audio.play( "hit" );
+			this.renderable.flicker( this.hitCooldownMax );
+			
+			this.renderable.setCurrentAnimation(
+				this.inSpace ? "SpaceStunned" : "Stunned"
+			);
+			
+			if( this.hp <= 0 )
+				this.die();
+		}
     },
 
     die: function()
@@ -108,7 +121,7 @@ var Player = me.ObjectEntity.extend(
 
     update: function()
     {
-        if( this.hp > 0 && this.pushTimer == 0 ) {
+        if( this.hp > 0 && this.pushTimer <= 0 ) {
             this.checkInput();
         }
 
@@ -117,6 +130,15 @@ var Player = me.ObjectEntity.extend(
             this.pushTimer--;
         }
 
+		if( this.isPushed && this.pushTimer <= 0){
+			console.log("player:: PUSH DONE"); 
+			this.isPushed = false;
+			this.setVelocity( this.origVelocity.x, this.origVelocity.y );
+			this.renderable.setCurrentAnimation(
+				this.inSpace ? "Floating" : "Idle"
+			);
+		}
+		
         this.jetpacked = false;
 
         //if ( this.wallStuckCounter > 0 ) --this.wallStuckCounter;
@@ -155,6 +177,8 @@ var Player = me.ObjectEntity.extend(
         {
             this.renderable.setCurrentAnimation( this.isPushed ? "Stunned" : "Idle" );
             this.setMaxVelocity( this.defaultMax.x, this.defaultMax.y );
+			this.setVelocity( this.origVelocity.x, this.origVelocity.y );
+			
             this.inSpace = false;
             this.gravity = this.origGravity;
             this.setFriction( 0.85, 0.1 );
@@ -166,6 +190,7 @@ var Player = me.ObjectEntity.extend(
 
         if( this.stunCooldown > 0 ) this.stunCooldown--;
         if( this.jetpackCooldown > 0 ) this.jetpackCooldown--;
+        if( this.hitCooldown > 0 ) this.hitCooldown--;
 
         // update cam follow position
         this.followPos.x = this.pos.x + this.centerOffsetX;
@@ -232,14 +257,14 @@ var Player = me.ObjectEntity.extend(
             //console.log( "player laser hit" );
             // DEAD, YOU ARE - DEAD
             this.hit( 2 );
-            this.collidable = false;
-            this.renderable.flicker( 100.0, (function() { this.collidable = true; }).bind(this) );
+            //this.collidable = false;
+           // this.renderable.flicker( 100.0, (function() { this.collidable = true; }).bind(this) );
         }
         if( colRes.obj.type == "missile" )
         {
             // DEAD, YOU ARE - DEAD
             colRes.obj.kill();
-            this.hit( 3 );
+            this.hit( 2 );
         }
         if( colRes.obj.door ) {
             // stop if we hit a door
@@ -254,14 +279,26 @@ var Player = me.ObjectEntity.extend(
             me.game.remove( colRes.obj );
             me.audio.play( "pickup" );
         }
+		
+		if( colRes.obj.type == "pod" )
+        {
+			me.state.change( me.state.GAMEOVER );
+		}
     },
 
     checkInput: function()
     {
         var self = this;
-        if ( me.input.isKeyPressed( "jetpack" ) )
+        
+		/* removed jetpack when not in space. 
+		if ( me.input.isKeyPressed( "jetpack" ) )
         {
             this.fireJetpack();
+        }
+		*/
+		if ( this.inSpace && me.input.isKeyPressed( "jump" ) )
+        {
+           this.fireJetpack();
         }
         else if( !this.inSpace )
         {
@@ -440,7 +477,7 @@ var Player = me.ObjectEntity.extend(
 
                 curStun.vel.y = vy + Math.sin(p*Math.PI/5);
                 curStun.vel.x = vx + Math.cos(p*Math.PI/5);
-                me.game.add( curStun, 4 );
+                me.game.add( curStun, 10 );
             }
 
             me.game.sort();
@@ -488,30 +525,29 @@ var Player = me.ObjectEntity.extend(
             }
         );
         zap.vel = this.vel;
-        me.game.add( zap, 4 );
+        me.game.add( zap, 10 );
         me.game.sort();
         me.audio.play( "stun" );
     },
 
     pushed: function( vel )
     {
-        this.hit( 1 );
-        this.setVelocity( this.origVelocity.x * 10.0, this.origVelocity.y * 10.0 );
-        this.vel.x += 10.0 * vel.x;
-        // flicker & set vel back to orig vel on end
-        var self = this;
-        self.renderable.setCurrentAnimation(
-            self.inSpace ? "SpaceStunned" : "Stunned"
-        );
-        self.isPushed = true;
-        self.renderable.flicker( this.pushTimerMax, function() {
-            self.isPushed = false;
-            self.setVelocity( self.origVelocity.x, self.origVelocity.y );
-            self.renderable.setCurrentAnimation(
-                self.inSpace ? "Floating" : "Idle"
-            );
-        });
-        self.pushTimer = this.pushTimerMax;
+        if(this.hitCooldown <= 0){
+			this.hit( 1 );
+			this.setVelocity( this.origVelocity.x * 7.0, this.origVelocity.y * 7.0 );
+			this.vel.x += 7.0 * vel.x;
+			// flicker & set vel back to orig vel on end
+			var self = this;
+			self.renderable.setCurrentAnimation(
+				self.inSpace ? "SpaceStunned" : "Stunned"
+			);
+			console.log("player:: PUSHING"); 
+			
+			// apparently waiting for flicker to finish sucks? 
+			// wait for pushTimer = 0 in update then reset 'ispushed'
+			self.isPushed = true;
+			self.pushTimer = this.pushTimerMax;
+		}
     }
 
     /*updateStunPos: function()

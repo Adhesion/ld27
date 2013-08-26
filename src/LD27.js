@@ -15,23 +15,27 @@ var jsApp = {
 
     loaded: function() {
         me.state.set( me.state.INTRO, new RadmarsScreen() );
-        //me.state.set( me.state.MENU, new TitleScreen() );
+        me.state.set( me.state.MENU, new TitleScreen() );
         me.state.set( me.state.PLAY, new PlayScreen() );
-        //me.state.set( me.state.GAMEOVER, new GameOverScreen() );
+        me.state.set( me.state.GAMEOVER, new GameOverScreen() );
 
-        //me.state.change( me.state.INTRO );
+        me.state.change( me.state.INTRO );
         //me.state.change( me.state.MENU );
         //me.state.change( me.state.GAMEOVER );
-        me.state.change( me.state.PLAY );
-        me.debug.renderHitBox = true;
+        //me.state.change( me.state.PLAY );
+        me.debug.renderHitBox = false;
 
+		
         me.entityPool.add( "player", Player );
+		
         me.entityPool.add( "enemy", Enemy );
+        me.entityPool.add( "mainframe", Mainframe );
         me.entityPool.add( "pusherbot", PusherBot );
         me.entityPool.add( "laserbot", LaserBot );
         me.entityPool.add( "missilebot", MissileBot );
         me.entityPool.add( "fox", Fox );
         me.entityPool.add( "zerogravity", ZeroGravityZone );
+        me.entityPool.add( "pod", PodZone );
         me.entityPool.add( "trash", Trash );
 
         me.entityPool.add( "switch", Switch );
@@ -82,6 +86,7 @@ var PlayScreen = me.ScreenObject.extend(
     onResetEvent: function()
     {
         me.game.addHUD( 0, 0, me.video.getWidth(), me.video.getHeight() );
+		me.game.HUD.addItem( "hp", new HPDisplay( 700, 10 ) );
         // Some HUD shit here?
         this.startLevel( location.hash.substr(1) || "level1" );
     },
@@ -104,6 +109,97 @@ var PlayScreen = me.ScreenObject.extend(
             }
         }
         return ret;
+    }
+});
+
+var HPDisplay = me.HUD_Item.extend(
+{
+    init: function( x, y )
+    {	
+		this.parent( x, y );
+		this.hpIcon = me.loader.getImage("heart");
+    },
+    
+    draw: function( context, x, y )
+    {
+		var player = me.game.player;//me.game.getEntityByName("player")[0];
+		
+		if( player ){
+			var offsetX = 0;  
+			var offsetY = 0; 
+			
+			for (var i=0; i<player.hp; i++){
+				context.drawImage( this.hpIcon, this.pos.x + x + offsetX, this.pos.y + y + offsetY );
+				offsetX-=48;
+			}
+		}
+	
+    }
+});
+
+var TitleScreen = me.ScreenObject.extend({
+    init: function() {
+        this.parent( true );
+        this.ctaFlicker = 0; 
+    },
+
+    onResetEvent: function() {
+        if( ! this.cta ) {
+            this.background= me.loader.getImage("intro");
+            this.cta = me.loader.getImage("introcta");
+        }
+
+        me.input.bindKey( me.input.KEY.ENTER, "enter", true );
+        me.audio.playTrack( "intro" );
+    },
+
+    update: function() {
+        if( me.input.isKeyPressed('enter')) {
+            me.state.change(me.state.PLAY);
+        }
+        
+        // have to force redraw :(
+        me.game.repaint();
+    },
+
+    draw: function(context) {
+        context.drawImage( this.background, 0, 0 );
+        this.ctaFlicker++;
+		if( this.ctaFlicker > 20 ) 
+		{
+            context.drawImage( this.cta, 74*4, 138*4 );
+			if( this.ctaFlicker > 40 ) this.ctaFlicker = 0;  
+		}
+    },
+
+    onDestroyEvent: function() {
+        me.input.unbindKey(me.input.KEY.ENTER);
+        me.audio.stopTrack();
+        //me.audio.play( "ready" );
+    }
+});
+
+
+var GameOverScreen = me.ScreenObject.extend(
+{
+    init: function()
+    {
+        this.parent( true );
+    },
+    
+    onResetEvent: function()
+    {
+        if ( !this.background )
+        {
+            this.background = me.loader.getImage( "gameover" );
+        }
+        me.audio.stopTrack();
+        me.audio.play( "intro" );
+    },
+    
+    draw: function( context, x, y )
+    {
+        context.drawImage( this.background, 0, 0 );
     }
 });
 

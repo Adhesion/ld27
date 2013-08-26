@@ -637,12 +637,13 @@ var Mainframe = me.ObjectEntity.extend({
         settings.image        = settings.image        || 'los';
         settings.spritewidth  = settings.spritewidth  || 48 * 5;
         settings.spriteheight = settings.spriteheight || 48 * 2;
-
+		
+		this.alwaysUpdate = true; 
         this.parent( x, y, settings );
 
         this.type = "mainframe";
 		
-		this.exploding = 200; 
+		this.exploding = 600; 
 		this.dieing = false;
     },
 
@@ -700,14 +701,41 @@ var Mainframe = me.ObjectEntity.extend({
                 collide: false,
                 noRemove: true
             }),
-
             me.game.add( this.staticparticle, 10 );
             me.game.sort();
 			
+			this.staticparticle = new PlayerParticle( this.pos.x + 96, this.pos.y, {
+                image: "stun",
+                spritewidth: 96,
+                frames: [ 0, 1, 2, 3 ],
+                speed: 10,
+                type: "wibble",
+                collide: false,
+                noRemove: true
+            }),
+			
+            me.game.add( this.staticparticle, 10 );
+            me.game.sort();
+			
+			this.staticparticle = new PlayerParticle( this.pos.x + 96 * 2, this.pos.y, {
+                image: "stun",
+                spritewidth: 96,
+                frames: [ 0, 1, 2, 3 ],
+                speed: 10,
+                type: "wibble",
+                collide: false,
+                noRemove: true
+            }),
+            me.game.add( this.staticparticle, 10 );
+            me.game.sort();
 			
 			this.dieing = true; 
 			
             me.audio.play( "robotstunned" );
+			
+			
+            me.audio.play( "switch" );
+            me.state.current().getDoor( 4 ).open();
         }
     }
 });

@@ -396,6 +396,12 @@ var MissileBot = Enemy.extend({
         settings.spriteheight = settings.spriteheight || 96;
         this.parent( x, y, settings );
 
+        if( settings.flip !== undefined )
+        {
+            this.walkRight = !settings.flip;
+            this.flipX( settings.flip );
+        }
+
         this.gravity = 0;
         this.missileCooldown = 0;
         this.missileCooldownMax = 150;
@@ -436,6 +442,8 @@ var MissileBot = Enemy.extend({
     {
         this.missileCooldown = this.missileCooldownMax;
         var posX = this.pos.x + this.width + 10; var posY = this.pos.y;
+        if( !this.walkRight )
+            posX = this.pos.x - 38;
         var frames = [ 0 ];
         var left = new Missile( posX, posY, {
             image: "missile",
@@ -444,9 +452,11 @@ var MissileBot = Enemy.extend({
             speed: 1,
             type: "missile",
             collide: false,
-            flip: !this.walkRight,
+            flip: false,
             noAnimation: true
         });
+        if( !this.walkRight )
+            left.renderable.angle = Math.PI;
         me.game.add( left, this.z + 1 );
         me.game.sort();
         me.audio.play( "missilefire" );

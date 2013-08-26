@@ -31,6 +31,11 @@ var Player = me.ObjectEntity.extend(
 
         this.stunCooldown = 0;
         this.stunCooldownMax = 30;
+
+        this.enemyStunned = false;
+
+        this.font = new me.BitmapFont("16x16_font", 16);
+        this.font.set( "center" );
 		
 		this.hitCooldown = 0; 
 		this.hitCooldownMax = 60;
@@ -86,6 +91,9 @@ var Player = me.ObjectEntity.extend(
 		//removed jetpack in normal mode, jump jets in space. 
         //me.input.bindKey( me.input.KEY.C, "jetpack", true );
         me.input.bindKey( me.input.KEY.C, "stun", true );
+
+        this.font = new me.BitmapFont("16x16_font", 16);
+        this.font.set( "center" );
 
         me.game.player = this;
     },
@@ -189,6 +197,7 @@ var Player = me.ObjectEntity.extend(
             this.updateSpaceTime();
 
         if( this.stunCooldown > 0 ) this.stunCooldown--;
+        if( this.stunCooldown == 0 ) this.enemyStunned = false;
         if( this.jetpackCooldown > 0 ) this.jetpackCooldown--;
         if( this.hitCooldown > 0 ) this.hitCooldown--;
 
@@ -550,6 +559,22 @@ var Player = me.ObjectEntity.extend(
 			self.isPushed = true;
 			self.pushTimer = this.pushTimerMax;
 		}
+    },
+
+    draw: function( context )
+    {
+        this.parent( context );
+        if( this.enemyStunned )
+        {
+            var stunTimerDisplay = this.stunCooldown / 60.0;
+            stunTimerDisplay = stunTimerDisplay.toFixed( 1 );
+            this.font.draw(
+                context,
+                "" + stunTimerDisplay,
+                this.pos.x + 40,
+                this.pos.y - 16
+            );
+        }
     }
 
     /*updateStunPos: function()

@@ -204,6 +204,7 @@ var Enemy = me.ObjectEntity.extend({
             this.stunTimer = this.stunTimerMax;
 			
 			me.game.player.stunCooldown = this.stunTimerMax;
+            me.game.player.enemyStunned = true;
 			
             this.charging = false;
             this.chargeCounter = 0;

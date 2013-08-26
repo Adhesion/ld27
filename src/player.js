@@ -515,6 +515,8 @@ var PlayerParticle = me.ObjectEntity.extend(
 
         this.renderable.animationspeed = speed;
 
+        this.alwaysUpdate = true;
+
         if( !noAnimation )
         {
             this.renderable.addAnimation( "play", frames );

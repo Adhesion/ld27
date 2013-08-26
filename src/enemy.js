@@ -36,6 +36,10 @@ var Enemy = me.ObjectEntity.extend({
         this.madCounter = 0;
         this.madCounterMax = 600;
 
+        this.chargeCounter = 0;
+        this.chargeMax = 150;
+        this.charging = true;
+
         this.type = "enemy";
     },
 
@@ -78,6 +82,7 @@ var Enemy = me.ObjectEntity.extend({
         this.setVelocity( this.origVelocity.x, this.origVelocity.y );
         this.AIstate = "idle";
 
+        this.charging = false;
     },
 
     // what the robot does on idle
@@ -88,6 +93,16 @@ var Enemy = me.ObjectEntity.extend({
 
     // what the robot does when it sees you
     madAct: function()
+    {
+
+    },
+
+    charge: function()
+    {
+        this.charging = true;
+    },
+
+    fire: function()
     {
 
     },
@@ -103,6 +118,17 @@ var Enemy = me.ObjectEntity.extend({
         else if( this.AIstate == "mad" )
         {
             this.madAct();
+
+            if( this.charging )
+            {
+                this.chargeCounter++;
+                if( this.chargeCounter >= this.chargeMax )
+                {
+                    this.charging = false;
+                    this.chargeCounter = 0;
+                    this.fire();
+                }
+            }
 
             this.madCounter--;
             if( this.madCounter == 0 )
@@ -155,7 +181,7 @@ var Enemy = me.ObjectEntity.extend({
                 this.sight.flipX( !this.walkRight );
             }
         }
-    },
+    }
 });
 
 var PusherBot = Enemy.extend({
@@ -267,13 +293,19 @@ var LaserBot = Enemy.extend({
 
     madAct: function()
     {
-        if( this.laserCooldown == 0 )
-            this.fireLasers();
+        if( this.laserCooldown == 0 && !this.charging )
+            this.charge();
     },
 
-    fireLasers: function()
+    charge: function()
     {
         me.audio.play( "charging" );
+        me.audio.play( "lasercharge" );
+        this.parent();
+    },
+
+    fire: function()
+    {
         me.audio.play( "laserfire" );
 
         var posX = this.pos.x - 245; var posY = this.pos.y + 44;
@@ -368,6 +400,8 @@ var MissileBot = Enemy.extend({
         this.renderable.addAnimation("Calm", [9, 10, 11], 10 );
         this.renderable.addAnimation("Stunned", [12,13,14], 10 );
 
+        this.chargeMax = 60;
+
         this.makeIdle();
     },
 
@@ -388,11 +422,11 @@ var MissileBot = Enemy.extend({
 
     madAct: function()
     {
-        if( this.missileCooldown == 0 )
-            this.fireMissile();
+        if( this.missileCooldown == 0 && !this.charging )
+            this.charge();
     },
 
-    fireMissile: function()
+    fire: function()
     {
         this.missileCooldown = this.missileCooldownMax;
         var posX = this.pos.x + this.width + 10; var posY = this.pos.y;

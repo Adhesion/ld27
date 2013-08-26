@@ -518,13 +518,14 @@ var PlayerParticle = me.ObjectEntity.extend(
         {
             this.renderable.addAnimation( "play", frames );
             var self = this;
-            this.renderable.setCurrentAnimation( "play", function() {
+            var cb = settings.noRemove ? undefined : function() {
                 me.game.remove( self, true );
                 if( settings.callback ) {
                     settings.callback();
                 }
                 return false;
-            });
+            };
+            this.renderable.setCurrentAnimation( "play", cb );
         }
 
         this.type = type;

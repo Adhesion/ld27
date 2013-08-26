@@ -111,6 +111,7 @@ var Enemy = me.ObjectEntity.extend({
             this.stunTimer--;
             if( this.stunTimer <= 0 )
             {
+                me.game.remove( this.staticparticle );
                 this.makeIdle();
             }
         }
@@ -201,6 +202,19 @@ var PusherBot = Enemy.extend({
     {
         if( res.obj.type == "stun" )
         {
+            this.staticparticle = new PlayerParticle( this.pos.x, this.pos.y, {
+                image: "stun",
+                spritewidth: 96,
+                frames: [ 0, 1, 2, 3 ],
+                speed: 10,
+                type: "wibble",
+                collide: false,
+                noRemove: true
+            }),
+
+            me.game.add( this.staticparticle, 4 );
+            me.game.sort();
+
             me.game.remove( res.obj );
             this.AIstate = "stunned";
             this.renderable.setCurrentAnimation( "Stunned" );

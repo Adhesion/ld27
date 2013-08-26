@@ -443,14 +443,15 @@ var Player = me.ObjectEntity.extend(
             }
         );
 
-        var posX = this.pos.x + (this.curWalkLeft ? -40 : 85),
-            posY = this.pos.y + 52;
+        var posX = this.pos.x + (this.curWalkLeft ? -1 : 1 ) * 85,
+            posY = this.pos.y + 53;
         var zap = new PlayerParticle(
             posX,
             posY,
             {
                 image: "zap",
-                spritewidth: 48,
+                spritewidth: 96,
+                spriteheight: 48,
                 frames: [ 0, 1, 2, 3, 4 ],
                 speed: 4,
                 type: "stun",

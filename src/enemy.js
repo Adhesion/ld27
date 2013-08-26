@@ -602,14 +602,13 @@ var Missile = PlayerParticle.extend({
 var LineOfSight = me.ObjectEntity.extend({
     init: function( x, y, settings, enemyParent )
     {
-        settings.image        = settings.image        || 'los';
         settings.spritewidth  = settings.spriteWidth  || 256;
         settings.spriteheight = settings.spriteHeight || 256;
-		
-		
-		this.spritewidth = settings.spritewidth;
-		this.spriteheight = settings.spriteheight;
-		
+
+
+        this.spritewidth = settings.spritewidth;
+        this.spriteheight = settings.spriteheight;
+
         this.parent( x, y, settings );
 
         this.type = "los";

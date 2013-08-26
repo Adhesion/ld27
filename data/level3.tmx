@@ -106,8 +106,6 @@
   </object>
   <object name="LevelChanger" x="3627" y="1389" width="291" height="180">
    <properties>
-    <property name="duration" value="250"/>
-    <property name="fade" value="#000000"/>
     <property name="to" value="gameover"/>
    </properties>
   </object>

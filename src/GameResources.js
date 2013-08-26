@@ -68,6 +68,10 @@ var GameResources = [
     { name: "bg3", type: "image", src: "data/bg3.png" },
     { name: "mapshit1", type: "image", src: "data/mapshit1.png" },
     { name: "mapshit2", type: "image", src: "data/mapshit2.png" },
+	
+    { name: "intro", type: "image", src: "data/intro.png" },
+    { name: "introcta", type: "image", src: "data/introcta.png" },
+    { name: "gameover", type: "image", src: "data/gameover.png" },
 
     { name: "testlevel", type: "tmx", src: "data/testlevel.tmx"     },
     { name: "gravity",   type: "tmx", src: "data/gravity_level.tmx" },

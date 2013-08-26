@@ -15,14 +15,14 @@ var jsApp = {
 
     loaded: function() {
         me.state.set( me.state.INTRO, new RadmarsScreen() );
-        //me.state.set( me.state.MENU, new TitleScreen() );
+        me.state.set( me.state.MENU, new TitleScreen() );
         me.state.set( me.state.PLAY, new PlayScreen() );
-        //me.state.set( me.state.GAMEOVER, new GameOverScreen() );
+        me.state.set( me.state.GAMEOVER, new GameOverScreen() );
 
-        //me.state.change( me.state.INTRO );
+        me.state.change( me.state.INTRO );
         //me.state.change( me.state.MENU );
         //me.state.change( me.state.GAMEOVER );
-        me.state.change( me.state.PLAY );
+        //me.state.change( me.state.PLAY );
         me.debug.renderHitBox = false;
 
         me.entityPool.add( "player", Player );
@@ -103,6 +103,72 @@ var PlayScreen = me.ScreenObject.extend(
             }
         }
         return ret;
+    }
+});
+
+var TitleScreen = me.ScreenObject.extend({
+    init: function() {
+        this.parent( true );
+        this.ctaFlicker = 0; 
+    },
+
+    onResetEvent: function() {
+        if( ! this.cta ) {
+            this.background= me.loader.getImage("intro");
+            this.cta = me.loader.getImage("introcta");
+        }
+
+        me.input.bindKey( me.input.KEY.ENTER, "enter", true );
+        me.audio.playTrack( "intro" );
+    },
+
+    update: function() {
+        if( me.input.isKeyPressed('enter')) {
+            me.state.change(me.state.PLAY);
+        }
+        
+        // have to force redraw :(
+        me.game.repaint();
+    },
+
+    draw: function(context) {
+        context.drawImage( this.background, 0, 0 );
+        this.ctaFlicker++;
+		if( this.ctaFlicker > 20 ) 
+		{
+            context.drawImage( this.cta, 74*4, 138*4 );
+			if( this.ctaFlicker > 40 ) this.ctaFlicker = 0;  
+		}
+    },
+
+    onDestroyEvent: function() {
+        me.input.unbindKey(me.input.KEY.ENTER);
+        me.audio.stopTrack();
+        //me.audio.play( "ready" );
+    }
+});
+
+
+var GameOverScreen = me.ScreenObject.extend(
+{
+    init: function()
+    {
+        this.parent( true );
+    },
+    
+    onResetEvent: function()
+    {
+        if ( !this.background )
+        {
+            this.background = me.loader.getImage( "gameover" );
+        }
+        me.audio.stopTrack();
+        me.audio.play( "intro" );
+    },
+    
+    draw: function( context, x, y )
+    {
+        context.drawImage( this.background, 0, 0 );
     }
 });
 

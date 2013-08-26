@@ -15,19 +15,20 @@ var Enemy = me.ObjectEntity.extend({
 
         this.parent( x, y, settings );
 
-        this.origVelocity = new me.Vector2d( 1.0, 1.0 );
-        this.madVelocity = new me.Vector2d( 3.0, 3.0 );
+        this.origVelocity = new me.Vector2d( 1.0, 4.0 );
+        this.madVelocity = new me.Vector2d( 3.0, 4.0 );
         this.setVelocity( this.origVelocity.x, this.origVelocity.y );
         this.setFriction( 0.2, 0.2 );
 
         var losSettings = {};
 
         this.sight = new LineOfSight( this.pos.x, this.pos.y, losSettings, this );
-        me.game.add( this.sight, 5 ); // TODO fix this Z boolsheet (i think this.z is undefined before it gets added/sorted itself afterwards?)
+        me.game.add( this.sight, 10 ); // TODO fix this Z boolsheet (i think this.z is undefined before it gets added/sorted itself afterwards?)
         me.game.sort();
 
         this.AIstate = "idle";
         this.stunTimer = 0;
+        this.stunTimerMax = 600;
 
         this.walkCounter = 0;
         this.walkCounterMax = 100;
@@ -35,7 +36,10 @@ var Enemy = me.ObjectEntity.extend({
 
         this.madCounter = 0;
         this.madCounterMax = 600;
-
+		
+		this.waitCooldown = 0; 
+		this.waitCooldownMax = 120; 
+		
         this.chargeCounter = 0;
         this.chargeMax = 150;
         this.charging = true;
@@ -122,41 +126,47 @@ var Enemy = me.ObjectEntity.extend({
     update: function()
     {
         var lastWalkRight = this.walkRight;
+		
+		
+        if( this.waitCooldown > 0 ) {
+			this.waitCooldown--;
+		} 
+		
+		if( this.AIstate == "idle" )
+		{
+			this.patrol();
+		}
+		else if( this.AIstate == "mad" )
+		{
+			this.madAct();
 
-        if( this.AIstate == "idle" )
-        {
-            this.patrol();
-        }
-        else if( this.AIstate == "mad" )
-        {
-            this.madAct();
+			if( this.charging )
+			{
+				this.chargeCounter++;
+				if( this.chargeCounter >= this.chargeMax )
+				{
+					this.charging = false;
+					this.chargeCounter = 0;
+					this.fire();
+				}
+			}
 
-            if( this.charging )
-            {
-                this.chargeCounter++;
-                if( this.chargeCounter >= this.chargeMax )
-                {
-                    this.charging = false;
-                    this.chargeCounter = 0;
-                    this.fire();
-                }
-            }
-
-            this.madCounter--;
-            if( this.madCounter == 0 )
-            {
-                this.makeIdle();
-            }
-        }
-        else if( this.AIstate == "stunned" )
-        {
-            this.stunTimer--;
-            if( this.stunTimer <= 0 )
-            {
-                me.game.remove( this.staticparticle );
-                this.makeIdle();
-            }
-        }
+			this.madCounter--;
+			if( this.madCounter == 0 )
+			{
+				this.makeIdle();
+			}
+		}
+		else if( this.AIstate == "stunned" )
+		{
+			this.stunTimer--;
+			if( this.stunTimer <= 0 )
+			{
+				me.game.remove( this.staticparticle );
+				this.makeIdle();
+			}
+		}
+		
 
         this.updateMovement();
 
@@ -182,14 +192,19 @@ var Enemy = me.ObjectEntity.extend({
                 noRemove: true
             }),
 
-                me.game.add( this.staticparticle, 4 );
+                me.game.add( this.staticparticle, 10 );
             me.game.sort();
 
             this.AIstate = "stunned";
             this.renderable.setCurrentAnimation( "Stunned" );
-            this.stunTimer = 600;
+            this.stunTimer = this.stunTimerMax;
+			
+			me.game.player.stunCooldown = this.stunTimerMax;
+			
             this.charging = false;
             this.chargeCounter = 0;
+			
+			
             me.audio.play( "robotstunned" );
         }
     },
@@ -231,6 +246,7 @@ var PusherBot = Enemy.extend({
         this.renderable.addAnimation("Charge", [11,12], 10 );
         this.renderable.addAnimation("Stunned", [13,14,15], 10 );
         this.makeIdle();
+		
     },
 
     makeMad: function()
@@ -252,12 +268,15 @@ var PusherBot = Enemy.extend({
     onCollision: function( res, obj )
     {
         this.parent( res, obj );
-        if( this.AIstate != "stunned" ) {
+        if( this.AIstate != "stunned" && this.waitCooldown <= 0 ) {
             // res check is to make sure the enemy is facing the player
             if ( obj == me.game.player && (res.x < 0 != this.vel.x < 0) )
             {
+				this.waitCooldown = this.waitCooldownMax; 
                 me.game.player.pushed( this.vel );
                 me.audio.play( "robotstun" );
+				this.makeIdle();
+				this.madCounter = 0; 
             }
         }
     }
@@ -543,7 +562,7 @@ var LineOfSight = me.ObjectEntity.extend({
 
     seen: function()
     {
-        this.enemyParent.makeMad();
+        if(this.enemyParent.waitCooldown <= 0) this.enemyParent.makeMad();
     },
 
     update: function()

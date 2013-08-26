@@ -345,7 +345,7 @@ var LaserBot = Enemy.extend({
         var posX = this.pos.x - 245; var posY = this.pos.y + 44;
         var width = 285; var height = 39;
         var z = this.z + 1;
-        var frames = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
+        var frames = [ 0, 2, 4, 5, 3, 4, 5, 3, 4, 5, 3, 4, 5, 3, 4, 5, 3, 4, 5, 3, 4, 5, 1, 3, 4, 5, 0, 3, 4, 6, 0, 2, 1, 6, 0 ];
 
         var left = new PlayerParticle( posX, posY, {
             image: "laser",
@@ -735,6 +735,7 @@ var Mainframe = me.ObjectEntity.extend({
 			
 			
             me.audio.play( "switch" );
+            me.state.current().getDoor( 3 ).open();
             me.state.current().getDoor( 4 ).open();
         }
     }

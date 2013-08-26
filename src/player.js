@@ -279,6 +279,11 @@ var Player = me.ObjectEntity.extend(
             me.game.remove( colRes.obj );
             me.audio.play( "pickup" );
         }
+		
+		if( colRes.obj.type == "pod" )
+        {
+			me.state.change( me.state.GAMEOVER );
+		}
     },
 
     checkInput: function()

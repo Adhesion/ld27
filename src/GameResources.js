@@ -30,6 +30,7 @@ var GameResources = [
 	
     { name: "switch", type: "image", src: "data/switch.png" },
     { name: "door", type: "image", src: "data/door.png" },
+    { name: "heart", type: "image", src: "data/heart.png" },
 
     { name: "beep", type: "audio", src: "data/", channels : 2 },
     { name: "charging", type: "audio", src: "data/", channels : 2 },

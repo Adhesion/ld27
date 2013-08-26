@@ -31,6 +31,7 @@ var jsApp = {
         me.entityPool.add( "laserbot", LaserBot );
         me.entityPool.add( "missilebot", MissileBot );
         me.entityPool.add( "zerogravity", ZeroGravityZone );
+        me.entityPool.add( "trash", Trash );
 
         me.entityPool.add( "switch", Switch );
         me.entityPool.add( "door", Door );

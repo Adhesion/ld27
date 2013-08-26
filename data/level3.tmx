@@ -75,5 +75,23 @@
     <property name="image" value="player"/>
    </properties>
   </object>
+  <object name="LevelChanger" x="3621" y="1543" width="291" height="180">
+   <properties>
+    <property name="duration" value="250"/>
+    <property name="fade" value="#000000"/>
+    <property name="to" value="gameover"/>
+   </properties>
+  </object>
+  <object name="switch" x="1777" y="5213" width="68" height="59">
+   <properties>
+    <property name="doorID" value="2"/>
+    <property name="flip" value="true"/>
+   </properties>
+  </object>
+  <object name="door" x="3408" y="4754" width="48" height="144">
+   <properties>
+    <property name="doorID" value="2"/>
+   </properties>
+  </object>
  </objectgroup>
 </map>

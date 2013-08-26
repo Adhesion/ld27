@@ -35,9 +35,12 @@ var Player = me.ObjectEntity.extend(
         this.pushTimer = 0;
         this.pushTimerMax = 60;
 
-        this.jetpackCooldownMax = 250;
-        this.jetpackCooldown = this.jetpackCooldownMax;
+        // this is mostly broken/unused i think
+        this.jetpackCooldownMax = 60;
+        this.jetpackCooldown = 0;
         this.jetpacked = false; // have we jetpacked this frame?
+
+        this.boosted = false; // have we boosted this jump?
 
         this.collidable = true;
 
@@ -125,8 +128,11 @@ var Player = me.ObjectEntity.extend(
             // hit ground
             if( envRes.y > 0 && ! this.inSpace )
             {
+                // this is outside the fall check in case we boost purely on land
+                this.boosted = false;
                 if ( lastFalling && !this.falling )
                 {
+                    // land
                     this.doubleJumped = false;
                     this.renderable.setCurrentAnimation( "Idle" );
                     me.audio.play( "step" );
@@ -159,7 +165,7 @@ var Player = me.ObjectEntity.extend(
             this.updateSpaceTime();
 
         if( this.stunCooldown > 0 ) this.stunCooldown--;
-        if( this.jetpackCooldown < this.jetpackCooldownMax && !this.jetpacked ) this.jetpackCooldown += 1;
+        if( this.jetpackCooldown > 0 ) this.jetpackCooldown--;
 
         // update cam follow position
         this.followPos.x = this.pos.x + this.centerOffsetX;
@@ -378,10 +384,16 @@ var Player = me.ObjectEntity.extend(
 
     fireJetpack: function()
     {
-        var available = this.jetpackCooldown > 0;
+        var available = this.jetpackCooldown == 0;
+        if( !this.inSpace )
+        {
+            available = available && !this.boosted;
+        }
         if ( available )
         {
-            this.jetpackCooldown -= 10;
+            this.boosted = true;
+
+            this.jetpackCooldown = this.jetpackCooldownMax;
             this.jetpacked = true;
             var nvx, nvy;
             if( me.input.isKeyPressed( "up" ) ) {

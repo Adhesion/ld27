@@ -27,8 +27,13 @@
   <object name="trash" x="349" y="80" width="67" height="61"/>
   <object name="trash" x="488" y="85" width="67" height="61"/>
   <object name="trash" x="610" y="83" width="67" height="61"/>
-  <object name="trash" x="854" y="62" width="67" height="61"/>
-  <object name="trash" x="993" y="65" width="67" height="61"/>
+  <object name="trash" x="732" y="57" width="67" height="61"/>
+  <object name="trash" x="803" y="159" width="67" height="61"/>
+  <object name="LevelChanger" x="921" y="55" width="176" height="145">
+   <properties>
+    <property name="to" value="testlevel"/>
+   </properties>
+  </object>
  </objectgroup>
  <layer name="foreground" width="25" height="20">
   <data encoding="base64">

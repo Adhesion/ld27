@@ -55,7 +55,7 @@ var Player = me.ObjectEntity.extend(
         this.followPos = new me.Vector2d( this.pos.x + this.centerOffsetX,
             this.pos.y + this.centerOffsetY );
         this.renderable.addAnimation("Idle", [ 0 ], 100 );
-        this.renderable.addAnimation("ShootStun", [ 1, 2, 1 ], 30 );
+        this.renderable.addAnimation("ShootStun", [ 1, 2, 1 ], 10 );
         this.renderable.addAnimation("Stunned", [ 3 ], 10 );
         this.renderable.addAnimation("Walk", [ 4, 5, 6, 7 ], 10 );
         this.renderable.addAnimation("JumpUp", [ 8 ], 10 );
@@ -117,18 +117,20 @@ var Player = me.ObjectEntity.extend(
         var lastFalling = this.falling;
 
         // check collision against environment
-        var envRes = this.updateMovement();
-
-        // hit ground
-        if( envRes.y > 0 && ! this.inSpace )
-        {
-            if ( lastFalling && !this.falling )
+        var envRes;
+        if( envRes = this.updateMovement() ) {
+            // hit ground
+            if( envRes.y > 0 && ! this.inSpace )
             {
-                this.doubleJumped = false;
-                this.renderable.setCurrentAnimation( "Idle" );
-                //me.audio.play( "step" );
+                if ( lastFalling && !this.falling )
+                {
+                    this.doubleJumped = false;
+                    this.renderable.setCurrentAnimation( "Idle" );
+                    //me.audio.play( "step" );
+                }
             }
         }
+
         if( this.falling && ! lastFalling && ! this.inSpace && ! this.isPushed )
         {
             this.renderable.setCurrentAnimation("JumpDown");
@@ -368,37 +370,40 @@ var Player = me.ObjectEntity.extend(
             }
 
 
-            if( nvx || nvy ) {
-                var x = this.pos.x + 45,
-                    y = this.pos.y + 80,
-                    vx = -this.vel.x / 10;
-                    vy = -this.vel.y / 10;
 
-                this.vel.x = nvx * 10;
-                this.vel.y = nvy * 10;
-
-                if( !this.inSpace ) {
-                    this.renderable.setCurrentAnimation("JumpUp");
-                }
-
-                for( var p = 0; p < 10; p++ ) {
-                    var curStun = new PlayerParticle( x, y, {
-                        spritewidth: 48,
-                        image:   "jump",
-                        collide: false,
-                        flip:    this.curWalkLeft,
-                        frames:  [ 0, 1, 2, 3, 4, 5, 6, 7, 8 ],
-                        speed:   4,
-                        type:    "stun"
-                    });
-
-                    curStun.vel.y = vy + Math.sin(p*Math.PI/5);
-                    curStun.vel.x = vx + Math.cos(p*Math.PI/5);
-                    me.game.add( curStun, 4 );
-                }
-
-                me.game.sort();
+            if( !( nvx || nvy ) ) {
+                nvx = 0;
+                nvy = -1;
             }
+            var x = this.pos.x + 45,
+                y = this.pos.y + 80,
+                vx = -this.vel.x / 10;
+                vy = -this.vel.y / 10;
+
+            this.vel.x = nvx * 10;
+            this.vel.y = nvy * 10;
+
+            if( !this.inSpace ) {
+                this.renderable.setCurrentAnimation("JumpUp");
+            }
+
+            for( var p = 0; p < 10; p++ ) {
+                var curStun = new PlayerParticle( x, y, {
+                    spritewidth: 48,
+                    image:   "jump",
+                    collide: false,
+                    flip:    this.curWalkLeft,
+                    frames:  [ 0, 1, 2, 3, 4, 5, 6, 7, 8 ],
+                    speed:   4,
+                    type:    "stun"
+                });
+
+                curStun.vel.y = vy + Math.sin(p*Math.PI/5);
+                curStun.vel.x = vx + Math.cos(p*Math.PI/5);
+                me.game.add( curStun, 4 );
+            }
+
+            me.game.sort();
         }
         return available;
     },

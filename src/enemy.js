@@ -87,12 +87,20 @@ var Enemy = me.ObjectEntity.extend({
         this.AIstate = "idle";
 
         this.charging = false;
+        this.chargeCounter = 0;
     },
 
     // what the robot does on idle
     patrol: function()
     {
-        console.log( "base patrol" );
+        this.walkCounter++;
+        if( this.walkCounter >= this.walkCounterMax )
+        {
+            this.walkRight = !this.walkRight;
+            this.walkCounter = 0;
+        }
+
+        this.doWalk( !this.walkRight );
     },
 
     // what the robot does when it sees you
@@ -162,7 +170,28 @@ var Enemy = me.ObjectEntity.extend({
 
     collisionHandler: function( res )
     {
+        if( this.AIstate != "stunned" && res.obj.type == "stun" )
+        {
+            this.staticparticle = new PlayerParticle( this.pos.x, this.pos.y, {
+                image: "stun",
+                spritewidth: 96,
+                frames: [ 0, 1, 2, 3 ],
+                speed: 10,
+                type: "wibble",
+                collide: false,
+                noRemove: true
+            }),
 
+                me.game.add( this.staticparticle, 4 );
+            me.game.sort();
+
+            this.AIstate = "stunned";
+            this.renderable.setCurrentAnimation( "Stunned" );
+            this.stunTimer = 600;
+            this.charging = false;
+            this.chargeCounter = 0;
+            me.audio.play( "robotstunned" );
+        }
     },
 
     updateLOSPOS: function( lastWalkRight )
@@ -214,46 +243,10 @@ var PusherBot = Enemy.extend({
         this.parent();
     },
 
-    patrol: function()
-    {
-        this.walkCounter++;
-        if( this.walkCounter >= this.walkCounterMax )
-        {
-            this.walkRight = !this.walkRight;
-            this.walkCounter = 0;
-        }
-
-        this.doWalk( !this.walkRight );
-    },
-
     madAct: function()
     {
         this.walkRight = !(this.pos.x > me.game.player.pos.x);
         this.doWalk( !this.walkRight );
-    },
-
-    collisionHandler: function( res )
-    {
-        if( this.AIstate != "stunned" && res.obj.type == "stun" )
-        {
-            this.staticparticle = new PlayerParticle( this.pos.x, this.pos.y, {
-                image: "stun",
-                spritewidth: 96,
-                frames: [ 0, 1, 2, 3 ],
-                speed: 10,
-                type: "wibble",
-                collide: false,
-                noRemove: true
-            }),
-
-            me.game.add( this.staticparticle, 4 );
-            me.game.sort();
-
-            this.AIstate = "stunned";
-            this.renderable.setCurrentAnimation( "Stunned" );
-            this.stunTimer = 600;
-            me.audio.play( "robotstunned" );
-        }
     },
 
     onCollision: function( res, obj )
@@ -281,19 +274,19 @@ var LaserBot = Enemy.extend({
         this.laserCooldown = 0;
         this.laserCooldownMax = 200;
         this.renderable.addAnimation("Idle", [0], 100 );
-        this.renderable.addAnimation("Walk", [0,1], 10 );
+        this.renderable.addAnimation("Walk", [1], 10 );
         this.renderable.addAnimation("Mad",  [2,3,4,5,6,7,8,9], 10 );
         this.renderable.addAnimation("Charge",  [9], 10 );
         this.renderable.addAnimation("Shoot", [9], 10 );
         this.renderable.addAnimation("Calm", [10,11,12,13], 10 );
         this.renderable.addAnimation("Stunned", [14,15,16], 10 );
 
+        this.origVelocity = new me.Vector2d( 0.5, 0.5 );
+        this.setVelocity( this.origVelocity.x, this.origVelocity.y );
+
+        this.updateColRect( 10, 100, 8, 94 );
+
         this.makeIdle();
-    },
-
-    patrol: function()
-    {
-
     },
 
     madAct: function()

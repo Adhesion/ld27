@@ -200,7 +200,7 @@ var PusherBot = Enemy.extend({
 
     collisionHandler: function( res )
     {
-        if( res.obj.type == "stun" )
+        if( this.AIstate != "stunned" && res.obj.type == "stun" )
         {
             this.staticparticle = new PlayerParticle( this.pos.x, this.pos.y, {
                 image: "stun",
@@ -215,7 +215,6 @@ var PusherBot = Enemy.extend({
             me.game.add( this.staticparticle, 4 );
             me.game.sort();
 
-            me.game.remove( res.obj );
             this.AIstate = "stunned";
             this.renderable.setCurrentAnimation( "Stunned" );
             this.stunTimer = 600;

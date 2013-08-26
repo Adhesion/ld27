@@ -23,7 +23,7 @@ var jsApp = {
         //me.state.change( me.state.MENU );
         //me.state.change( me.state.GAMEOVER );
         me.state.change( me.state.PLAY );
-        me.debug.renderHitBox = true;
+        me.debug.renderHitBox = false;
 
         me.entityPool.add( "player", Player );
         me.entityPool.add( "enemy", Enemy );

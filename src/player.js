@@ -76,8 +76,10 @@ var Player = me.ObjectEntity.extend(
         me.input.bindKey( me.input.KEY.LEFT, "left" );
         me.input.bindKey( me.input.KEY.RIGHT, "right" );
         me.input.bindKey( me.input.KEY.X, "jump", true );
-        me.input.bindKey( me.input.KEY.C, "jetpack", true );
-        me.input.bindKey( me.input.KEY.V, "stun", true );
+		
+		//removed jetpack in normal mode, jump jets in space. 
+        //me.input.bindKey( me.input.KEY.C, "jetpack", true );
+        me.input.bindKey( me.input.KEY.C, "stun", true );
 
         me.game.player = this;
     },
@@ -253,9 +255,16 @@ var Player = me.ObjectEntity.extend(
     checkInput: function()
     {
         var self = this;
-        if ( me.input.isKeyPressed( "jetpack" ) )
+        
+		/* removed jetpack when not in space. 
+		if ( me.input.isKeyPressed( "jetpack" ) )
         {
             this.fireJetpack();
+        }
+		*/
+		if ( this.inSpace && me.input.isKeyPressed( "jump" ) )
+        {
+           this.fireJetpack();
         }
         else if( !this.inSpace )
         {

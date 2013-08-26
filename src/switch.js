@@ -21,11 +21,6 @@ var Switch = me.ObjectEntity.extend({
             throw "Must set doorID for switch";
         }
 
-        if( settings.flip )
-        {
-            this.flipX( true );
-        }
-
         this.parent( x, y, settings );
 
         this.flipped = false;
@@ -41,6 +36,11 @@ var Switch = me.ObjectEntity.extend({
 
         this.font = new me.BitmapFont("16x16_font", 16);
         this.font.set( "center" );
+		
+        if( settings.flip !== undefined )
+        {
+            this.flipX( true );
+        }
     },
 
     onCollision: function( res, obj )

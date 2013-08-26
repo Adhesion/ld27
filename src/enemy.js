@@ -19,9 +19,10 @@ var Enemy = me.ObjectEntity.extend({
         this.madVelocity = new me.Vector2d( 3.0, 4.0 );
         this.setVelocity( this.origVelocity.x, this.origVelocity.y );
         this.setFriction( 0.2, 0.2 );
-
-        var losSettings = {};
-
+		
+		console.log("BADDIE: " + settings.losHeight); 
+		
+        var losSettings = {spriteHeight:settings.losHeight, spriteWidth:settings.losWidth};
         this.sight = new LineOfSight( this.pos.x, this.pos.y, losSettings, this );
         me.game.add( this.sight, 10 ); // TODO fix this Z boolsheet (i think this.z is undefined before it gets added/sorted itself afterwards?)
         me.game.sort();
@@ -43,7 +44,10 @@ var Enemy = me.ObjectEntity.extend({
         this.chargeCounter = 0;
         this.chargeMax = 150;
         this.charging = true;
-
+		
+		this.losOffsetRight = 100; 
+		this.losOffsetLeft = -100; 
+		
         this.type = "enemy";
     },
 
@@ -216,13 +220,13 @@ var Enemy = me.ObjectEntity.extend({
         {
             if ( this.walkRight )
             {
-                this.sight.pos.x = this.pos.x + 50;
+                this.sight.pos.x = this.pos.x + this.losOffsetRight;
             }
             else
             {
-                this.sight.pos.x = this.pos.x - 100;
+                this.sight.pos.x = this.pos.x + this.losOffsetLeft;
             }
-            this.sight.pos.y = this.pos.y;
+            this.sight.pos.y = this.pos.y - this.sight.spriteheight/2 + 50;
 
             if ( lastWalkRight != this.walkRight )
             {
@@ -238,7 +242,14 @@ var PusherBot = Enemy.extend({
         settings.image        = settings.image        || 'pusherbot';
         settings.spritewidth  = settings.spritewidth  || 117;
         settings.spriteheight = settings.spriteheight || 114;
+		settings.losHeight = 128; 
+		settings.losWidth = 256; 
+		
         this.parent( x, y, settings );
+		
+		this.losOffsetRight = 30; 
+		this.losOffsetLeft = -150; 
+		
         this.renderable.addAnimation("Idle", [0], 100 );
         this.renderable.addAnimation("Walk", [0,1], 10 );
         this.renderable.addAnimation("Mad",  [2,3,4,5,6,7], 10 );
@@ -288,8 +299,14 @@ var LaserBot = Enemy.extend({
         settings.image        = settings.image        || 'laserbot';
         settings.spritewidth  = settings.spritewidth  || 120;
         settings.spriteheight = settings.spriteheight || 120;
+		settings.losHeight = 512; 
+		settings.losWidth = 512; 
+		
         this.parent( x, y, settings );
 
+		this.losOffsetRight = -150; 
+		this.losOffsetLeft = -256; 
+		
         this.laserCooldown = 0;
         this.laserCooldownMax = 200;
         this.renderable.addAnimation("Idle", [0], 100 );
@@ -406,8 +423,14 @@ var MissileBot = Enemy.extend({
         settings.image        = settings.image        || 'missilebot';
         settings.spritewidth  = settings.spritewidth  || 96;
         settings.spriteheight = settings.spriteheight || 96;
+		settings.losHeight = 512; 
+		settings.losWidth = 256;
+		
         this.parent( x, y, settings );
-
+		
+		this.losOffsetRight = 30; 
+		this.losOffsetLeft = -150; 
+		
         if( settings.flip !== undefined )
         {
             this.walkRight = !settings.flip;
@@ -416,7 +439,7 @@ var MissileBot = Enemy.extend({
 
         this.gravity = 0;
         this.missileCooldown = 0;
-        this.missileCooldownMax = 150;
+        this.missileCooldownMax = 100;
         this.renderable.addAnimation("Idle", [0], 100 );
         this.renderable.addAnimation("Walk", [0], 10 );
         this.renderable.addAnimation("Mad",  [1,2,3,4,5,6,7,8], 10 );
@@ -456,7 +479,7 @@ var MissileBot = Enemy.extend({
         var posX = this.pos.x + 18; var posY = this.pos.y + 10;
         if( !this.walkRight )
             posX = this.pos.x + 48;
-        var frames = [ 0, 1, 2 ];
+        var frames = [ 0 ];
         var left = new Missile( posX, posY, {
             image: "missile",
             spritewidth: 48,
@@ -488,15 +511,43 @@ var Missile = PlayerParticle.extend({
     {
         this.parent( x, y, settings );
 
-        this.setVelocity( 2.5, 2.5 );
-        this.life = 400;
+        this.setVelocity( 4.0, 4.0 );
+        this.life = 300;
+		
+		this.particleSpawnCount = 0;
     },
 
     update: function()
     {
+		this.particleSpawnCount--;
+		if(this.particleSpawnCount <= 0){
+			this.particleSpawnCount = 5;
+			//spawn particle? 
+			
+			var posX = this.pos.x,
+				posY = this.pos.y;
+			
+			var smoke = new PlayerParticle(
+				posX,
+				posY,
+				{
+					image: "missileSmoke",
+					spritewidth: 48,
+					spriteheight: 48,
+					frames: [ 0, 1, 2, 3 ],
+					speed: 4,
+					type: "smoke",
+					collide: false,
+					flip: false
+				}
+			);
+			me.game.add( smoke, 9 );
+			me.game.sort();
+		}
+	
         var distance = this.toPlayer();
-        if( Math.abs(distance.x) > 20.0 ) this.vel.x += (distance.x * 0.0005 + (Math.random()*0.5 - 0.25));
-        if( Math.abs(distance.y) > 20.0 ) this.vel.y += (distance.y * 0.0005 + (Math.random()*0.5 - 0.25));
+        if( Math.abs(distance.x) > 20.0 ) this.vel.x += (distance.x * 0.001 + (Math.random()*0.5 - 0.25));
+        if( Math.abs(distance.y) > 20.0 ) this.vel.y += (distance.y * 0.001 + (Math.random()*0.5 - 0.25));
         this.renderable.angle = Math.atan2( distance.y, distance.x );
 
         var res;
@@ -552,8 +603,13 @@ var LineOfSight = me.ObjectEntity.extend({
     init: function( x, y, settings, enemyParent )
     {
         settings.image        = settings.image        || 'los';
-        settings.spritewidth  = settings.spritewidth  || 192;
-        settings.spriteheight = settings.spriteheight || 32;
+        settings.spritewidth  = settings.spriteWidth  || 256;
+        settings.spriteheight = settings.spriteHeight || 256;
+		
+		
+		this.spritewidth = settings.spritewidth;
+		this.spriteheight = settings.spriteheight;
+		
         this.parent( x, y, settings );
 
         this.type = "los";
@@ -571,3 +627,88 @@ var LineOfSight = me.ObjectEntity.extend({
         return true;
     }
 });
+
+
+
+
+var Mainframe = me.ObjectEntity.extend({
+    init: function( x, y, settings )
+    {
+        settings.image        = settings.image        || 'los';
+        settings.spritewidth  = settings.spritewidth  || 48 * 5;
+        settings.spriteheight = settings.spriteheight || 48 * 2;
+
+        this.parent( x, y, settings );
+
+        this.type = "mainframe";
+		
+		this.exploding = 200; 
+		this.dieing = false;
+    },
+
+    update: function()
+    {
+		if(this.dieing){
+			this.exploding--;
+			
+			this.pos.x += Math.random()*2-1;
+			this.pos.y += Math.random()*2-1;
+			
+			if(this.exploding % 5 == 0){
+				var dPosX = this.pos.x + ( this.width / 2 ) - 48 + Math.random()* 200-100;
+				var dPosY = this.pos.y + ( this.height / 2 ) - 48 + Math.random()* 200-100;
+				
+				
+				var asplode = new PlayerParticle( dPosX, dPosY, {
+					spritewidth: 144,
+					image:   "explode",
+					collide: false,
+					flip:    false,
+					frames:  [ 0, 1, 2, 3, 4, 5, 6, 7 ],
+					speed:   4,
+					type:    "explode"
+				});
+				me.game.add( asplode, this.z+1 );
+				me.game.sort();
+				
+			}
+			if(this.exploding % 20 == 0) me.audio.play( "explosion" );
+			
+			me.game.viewport.shake(25, 25, me.game.viewport.AXIS.BOTH);
+			
+			if(this.exploding <= 0){
+				me.state.change( me.state.GAMEOVER );
+			}
+			
+		}
+	
+        me.game.collide( this, true ).forEach( this.collisionHandler, this );
+        this.parent( this );
+        return true;
+    },
+
+    collisionHandler: function( res )
+    {
+        if( res.obj.type == "stun" &&  !this.dieing )
+        {
+            this.staticparticle = new PlayerParticle( this.pos.x, this.pos.y, {
+                image: "stun",
+                spritewidth: 96,
+                frames: [ 0, 1, 2, 3 ],
+                speed: 10,
+                type: "wibble",
+                collide: false,
+                noRemove: true
+            }),
+
+            me.game.add( this.staticparticle, 10 );
+            me.game.sort();
+			
+			
+			this.dieing = true; 
+			
+            me.audio.play( "robotstunned" );
+        }
+    }
+});
+

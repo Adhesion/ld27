@@ -25,8 +25,11 @@ var jsApp = {
         //me.state.change( me.state.PLAY );
         me.debug.renderHitBox = false;
 
+		
         me.entityPool.add( "player", Player );
+		
         me.entityPool.add( "enemy", Enemy );
+        me.entityPool.add( "mainframe", Mainframe );
         me.entityPool.add( "pusherbot", PusherBot );
         me.entityPool.add( "laserbot", LaserBot );
         me.entityPool.add( "missilebot", MissileBot );

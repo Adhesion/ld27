@@ -434,10 +434,10 @@ var MissileBot = Enemy.extend({
     fire: function()
     {
         this.missileCooldown = this.missileCooldownMax;
-        var posX = this.pos.x + this.width + 10; var posY = this.pos.y;
+        var posX = this.pos.x + 18; var posY = this.pos.y + 10;
         if( !this.walkRight )
-            posX = this.pos.x - 38;
-        var frames = [ 0 ];
+            posX = this.pos.x + 48;
+        var frames = [ 0, 1, 2 ];
         var left = new Missile( posX, posY, {
             image: "missile",
             spritewidth: 48,
@@ -446,7 +446,7 @@ var MissileBot = Enemy.extend({
             type: "missile",
             collide: false,
             flip: false,
-            noAnimation: true
+            noRemove: true
         });
         if( !this.walkRight )
             left.renderable.angle = Math.PI;
@@ -500,6 +500,17 @@ var Missile = PlayerParticle.extend({
         this.collidable = false;
         me.game.remove( this );
         me.audio.play( "explosion" );
+        var asplode = new PlayerParticle( this.pos.x-48, this.pos.y-48, {
+            spritewidth: 144,
+            image:   "explode",
+            collide: false,
+            flip:    false,
+            frames:  [ 0, 1, 2, 3, 4, 5, 6, 7 ],
+            speed:   4,
+            type:    "explode"
+        });
+        me.game.add( asplode, this.z+1 );
+        me.game.sort();
     },
 
     toPlayer: function()

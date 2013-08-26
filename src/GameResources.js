@@ -61,6 +61,10 @@ var GameResources = [
     { name: "64x64_font", type: "image", src: "data/64x64_font.png" },
 
     { name: "collision_tiles", type: "image", src: "data/collision_tiles.png" },
+	
+    { name: "bg1", type: "image", src: "data/bg1.png" },
+    { name: "bg2", type: "image", src: "data/bg2.png" },
+    { name: "bg3", type: "image", src: "data/bg3.png" },
 
     { name: "testlevel", type: "tmx", src: "data/testlevel.tmx"     },
     { name: "gravity",   type: "tmx", src: "data/gravity_level.tmx" },

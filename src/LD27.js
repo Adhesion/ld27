@@ -69,7 +69,9 @@ var PlayScreen = me.ScreenObject.extend(
         me.game.sort();
         this.doors = [];
         me.game.HUD.removeItem( "spaceTimer" ); // have to remove old one if so, stupid
-        me.game.HUD.addItem( "spaceTimer", new CountDown());
+        me.game.viewport.fadeOut( '#000000', 1000, function() {
+            me.game.HUD.addItem( "spaceTimer", new CountDown());
+        });
     },
 
     // this will be called on state change -> this

@@ -435,7 +435,7 @@ var Player = me.ObjectEntity.extend(
                 spritewidth: 48,
                 frames: [ 0, 1, 2, 3, 4 ],
                 speed: 4,
-                type: "zap",
+                type: "stun",
                 collide: false,
                 flip: this.curWalkLeft,
                 callback: function() {

@@ -67,25 +67,20 @@ var PlayScreen = me.ScreenObject.extend(
     /** Update the level display & music. Called on all level changes. */
     changeLevel: function( level )
     {
-
-    },
-
-    startLevel: function( level )
-    {
         // this only gets called on start?
         me.audio.stopTrack();
-        // AWFUL SHIT
-        if( level != "testlevel" && level != "gravity" )
-        {
-            me.audio.playTrack( level );
-        }
-        me.levelDirector.loadLevel( level );
-        me.game.sort();
+              me.game.sort();
         this.doors = [];
         me.game.HUD.removeItem( "spaceTimer" ); // have to remove old one if so, stupid
         me.game.viewport.fadeOut( '#000000', 1000, function() {
+            // AWFUL SHIT
+            if( level != "testlevel" && level != "gravity" )
+            {
+                me.audio.playTrack( level );
+            }
             me.game.HUD.addItem( "spaceTimer", new CountDown());
         });
+
     },
 
     // this will be called on state change -> this
@@ -96,12 +91,13 @@ var PlayScreen = me.ScreenObject.extend(
         me.game.addHUD( 0, 0, me.video.getWidth(), me.video.getHeight() );
 		me.game.HUD.addItem( "hp", new HPDisplay( 700, 10 ) );
         // Some HUD shit here?
-        this.startLevel( location.hash.substr(1) || "level1" );
+        var level =  location.hash.substr(1) || "level1" ;
+        me.levelDirector.loadLevel( level );
+        this.changeLevel( level );
     },
 
     onDestroyEvent: function()
     {
-        me.game.disableHUD();
         me.audio.stopTrack();
     },
 
@@ -197,6 +193,7 @@ var GameOverScreen = me.ScreenObject.extend(
 {
     init: function()
     {
+        me.game.disableHUD();
         this.parent( true );
         this.font = new me.BitmapFont("32x32_font", 32);
         this.font.set( "left" );
@@ -319,6 +316,8 @@ window.onReady( function() {
 /** WHen colliding with the end of the level do things to swap the levels. */
 var LevelChanger = me.LevelEntity.extend({
     init: function( x, y, settings ) {
+        settings.fade = '#000000';
+        settings.duration = 1000;
         this.parent( x, y, settings );
     },
 
@@ -336,7 +335,7 @@ var LevelChanger = me.LevelEntity.extend({
     /** Dirty hack. I don't think they intended to expose onFadeComplete. */
     onFadeComplete : function () {
         this.parent();
-        me.state.current().changeLevel( );
+        me.state.current().changeLevel( this.gotolevel );
     },
 
     goTo: function ( level ) {

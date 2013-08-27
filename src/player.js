@@ -239,7 +239,8 @@ var Player = me.ObjectEntity.extend(
             }
         }
 
-        me.game.HUD.setItemValue( "spaceTimer", this.spaceTimeDisplay );
+        if( me.game.HUD )
+            me.game.HUD.setItemValue( "spaceTimer", this.spaceTimeDisplay );
     },
 
     handleCollision: function( colRes )

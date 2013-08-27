@@ -93,13 +93,15 @@ var Player = me.ObjectEntity.extend(
         //me.input.bindKey( me.input.KEY.C, "jetpack", true );
         me.input.bindKey( me.input.KEY.C, "stun", true );
 
+        this.dead = false;
+
         me.game.player = this;
     },
 
     hit: function( dmg )
     {
-		if( this.hitCooldown <=0 ){ 
-			hitCooldown = this.hitCooldownMax; 
+		if( this.hitCooldown <=0 && this.hp > 0 ){
+			hitCooldown = this.hitCooldownMax;
 			this.hp -= dmg;
 			me.audio.play( "hit" );
 			this.renderable.flicker( this.hitCooldownMax );
@@ -115,6 +117,11 @@ var Player = me.ObjectEntity.extend(
 
     die: function()
     {
+        if( this.dead )
+            return;
+
+        this.dead = true;
+
         me.audio.play( "death" );
         var duration = 1000;
         this.spaceTimeDisplay = -1.0;

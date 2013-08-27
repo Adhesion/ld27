@@ -217,7 +217,7 @@ var GameOverScreen = me.ScreenObject.extend(
             {
                 this.background = me.loader.getImage( "gameover" );
                 me.audio.stopTrack();
-                me.audio.playTrack( "intro" );
+                me.audio.play( "badend" );
             }
         }
         this.timeString = "TIME: " + ((me.game.frameCounter/60.0).toFixed(1)).toString();

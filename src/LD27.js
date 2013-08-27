@@ -49,7 +49,7 @@ var PlayScreen = me.ScreenObject.extend(
 {
     init: function()
     {
-        me.game.trashCount = 0;
+
     },
 
     getLevel: function()
@@ -91,6 +91,7 @@ var PlayScreen = me.ScreenObject.extend(
     // this will be called on state change -> this
     onResetEvent: function()
     {
+        me.game.trashCount = 0;
         me.game.addHUD( 0, 0, me.video.getWidth(), me.video.getHeight() );
 		me.game.HUD.addItem( "hp", new HPDisplay( 700, 10 ) );
         // Some HUD shit here?
@@ -197,21 +198,32 @@ var GameOverScreen = me.ScreenObject.extend(
     
     onResetEvent: function()
     {
+        me.input.bindKey( me.input.KEY.ENTER, "enter", true );
         if ( !this.background )
         {
             if( me.game.goodEnding )
             {
                 this.background = me.loader.getImage( "gameover_good" );
                 me.audio.stopTrack();
-                me.audio.play( "intro" );
+                me.audio.playTrack( "intro" );
             }
             else
             {
                 this.background = me.loader.getImage( "gameover" );
                 me.audio.stopTrack();
-                me.audio.play( "intro" );
+                me.audio.playTrack( "intro" );
             }
         }
+    },
+
+    update: function()
+    {
+        if( me.input.isKeyPressed('enter')) {
+            me.audio.stopTrack();
+            me.state.change(me.state.INTRO);
+        }
+
+        return this.parent();
     },
     
     draw: function( context, x, y )

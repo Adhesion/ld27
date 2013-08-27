@@ -324,11 +324,6 @@ var LevelChanger = me.LevelEntity.extend({
     onCollision : function()
     {
         this.collidable = false;
-        if( this.nextlevel != "testlevel" && this.nextlevel != "gravity" )
-        {
-            me.audio.stopTrack();
-            me.audio.playTrack( this.nextlevel );
-        }
         return this.parent();
     },
 

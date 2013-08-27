@@ -101,7 +101,6 @@ var PlayScreen = me.ScreenObject.extend(
 
     onDestroyEvent: function()
     {
-        me.game.disableHUD();
         me.audio.stopTrack();
     },
 
@@ -197,6 +196,7 @@ var GameOverScreen = me.ScreenObject.extend(
 {
     init: function()
     {
+        me.game.disableHUD();
         this.parent( true );
         this.font = new me.BitmapFont("32x32_font", 32);
         this.font.set( "left" );

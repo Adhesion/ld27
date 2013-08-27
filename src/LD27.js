@@ -163,7 +163,7 @@ var TitleScreen = me.ScreenObject.extend({
         if( me.input.isKeyPressed('enter')) {
             me.state.change(me.state.PLAY);
         }
-        
+
         // have to force redraw :(
         me.game.repaint();
     },

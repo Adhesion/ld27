@@ -121,7 +121,7 @@ var Player = me.ObjectEntity.extend(
         this.renderable.flicker( duration );
         var fade = '#000000';
         me.game.viewport.fadeIn( fade, duration, function() {
-            me.state.current().startLevel( me.levelDirector.getCurrentLevelId() );
+            me.state.current().changeLevel( me.levelDirector.getCurrentLevelId() );
         });
     },
 

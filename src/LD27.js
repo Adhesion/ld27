@@ -49,7 +49,7 @@ var PlayScreen = me.ScreenObject.extend(
 {
     init: function()
     {
-
+        this.parent( true );
     },
 
     getLevel: function()
@@ -92,6 +92,7 @@ var PlayScreen = me.ScreenObject.extend(
     onResetEvent: function()
     {
         me.game.trashCount = 0;
+        me.game.frameCounter = 0;
         me.game.addHUD( 0, 0, me.video.getWidth(), me.video.getHeight() );
 		me.game.HUD.addItem( "hp", new HPDisplay( 700, 10 ) );
         // Some HUD shit here?
@@ -102,6 +103,11 @@ var PlayScreen = me.ScreenObject.extend(
     {
         me.game.disableHUD();
         me.audio.stopTrack();
+    },
+
+    update: function()
+    {
+        me.game.frameCounter++;
     },
 
     getDoor: function( doorID )
@@ -214,6 +220,7 @@ var GameOverScreen = me.ScreenObject.extend(
                 me.audio.playTrack( "intro" );
             }
         }
+        this.timeString = "TIME: " + ((me.game.frameCounter/60.0).toFixed(1)).toString();
     },
 
     update: function()
@@ -234,6 +241,12 @@ var GameOverScreen = me.ScreenObject.extend(
             "" + me.game.trashCount,
             412,
             382
+        );
+        this.font.draw(
+            context,
+            this.timeString,
+            240,
+            5
         );
     }
 });

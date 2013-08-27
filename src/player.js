@@ -5,6 +5,7 @@
  *
  * @author Adhesion
  */
+window.tick = 0.016666666;
 
 var Player = me.ObjectEntity.extend(
 {
@@ -224,14 +225,15 @@ var Player = me.ObjectEntity.extend(
     {
         if( this.inSpace )
         {
-            this.spaceTimeDisplay = ( this.spaceTimeMax * 1000 - ( me.timer.getTime() - this.spaceTimerStart ) ) / 1000;
+            this.spaceTimer --;
+            this.spaceTimeDisplay = this.spaceTimer * window.tick;
             this.spaceTimeDisplay = this.spaceTimeDisplay.toFixed( 1 );
 
             if( this.spaceTimeDisplay <= 0 ) {
                 this.spaceTimeDisplay = 0;
                 if( this.hp > 0 )
                 {
-                    this.spaceTimerStart = me.timer.getTime();
+                    this.spaceTimer = 600;
                     this.hit(1);
                 }
             }
@@ -250,7 +252,7 @@ var Player = me.ObjectEntity.extend(
             this.setFriction( 0.001, 0.001);
             this.setMaxVelocity( 8, 8 );
             this.inSpace = true;
-            this.spaceTimerStart = me.timer.getTime();
+            this.spaceTimer = 600;
         }
         if( colRes.obj.type == "los" )
         {

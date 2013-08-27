@@ -48,7 +48,7 @@ var Door = me.ObjectEntity.extend({
 
     open: function()
     {
-        this.timerStart = me.timer.getTime();
+        this.timer = 600;
         this.collidable = false;
         this.renderable.alpha = 0.0;
         //this.renderable.setCurrentAnimation( "open" );
@@ -74,7 +74,8 @@ var Door = me.ObjectEntity.extend({
 
         if( this.isOpen() )
         {
-            this.timeDisplay = ( this.maxTime * 1000 - ( me.timer.getTime() - this.timerStart ) ) / 1000;
+            this.timer--;
+            this.timeDisplay = this.timer * window.tick;
             this.timeDisplay = this.timeDisplay.toFixed( 1 );
 
             if( this.timeDisplay <= 0 ) {

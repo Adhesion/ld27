@@ -34,7 +34,7 @@ var Player = me.ObjectEntity.extend(
 
         this.enemyStunned = false;
 
-        this.font = new me.BitmapFont("16x16_font", 16);
+        this.font = new me.BitmapFont("16x16_font_blue", 16);
         this.font.set( "center" );
 		
 		this.hitCooldown = 0; 
@@ -91,9 +91,6 @@ var Player = me.ObjectEntity.extend(
 		//removed jetpack in normal mode, jump jets in space. 
         //me.input.bindKey( me.input.KEY.C, "jetpack", true );
         me.input.bindKey( me.input.KEY.C, "stun", true );
-
-        this.font = new me.BitmapFont("16x16_font", 16);
-        this.font.set( "center" );
 
         me.game.player = this;
     },

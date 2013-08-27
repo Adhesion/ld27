@@ -126,17 +126,19 @@
    </properties>
   </object>
   <object name="missilebot" x="8540" y="728" width="96" height="96"/>
-  <object name="trash" x="4072" y="3527" width="70" height="71"/>
-  <object name="trash" x="4404" y="3526" width="70" height="71"/>
-  <object name="trash" x="5864" y="1643" width="70" height="71"/>
-  <object name="trash" x="8008" y="1582" width="70" height="71"/>
-  <object name="trash" x="8486" y="1192" width="70" height="71"/>
-  <object name="trash" x="11841" y="933" width="70" height="71"/>
+  <object name="trash" x="4080" y="3553" width="48" height="48"/>
   <object name="trash" x="7434" y="498" width="70" height="71"/>
   <object name="trash" x="7556" y="522" width="70" height="71"/>
   <object name="trash" x="7485" y="643" width="70" height="71"/>
   <object name="trash" x="5037" y="2367" width="70" height="71"/>
   <object name="trash" x="6754" y="2365" width="70" height="71"/>
+  <object name="trash" x="4416" y="3552" width="48" height="48"/>
+  <object name="trash" x="6043" y="1683" width="48" height="48"/>
+  <object name="trash" x="5878" y="1681" width="48" height="48"/>
+  <object name="trash" x="5719" y="1683" width="48" height="48"/>
+  <object name="trash" x="8016" y="1591" width="48" height="48"/>
+  <object name="trash" x="8496" y="1204" width="48" height="48"/>
+  <object name="trash" x="11811" y="958" width="48" height="48"/>
  </objectgroup>
  <layer name="foreground" width="260" height="96">
   <data encoding="base64">

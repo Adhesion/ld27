@@ -65,7 +65,7 @@ var PlayScreen = me.ScreenObject.extend(
     },
 
     /** Update the level display & music. Called on all level changes. */
-    changeLevel: function( )
+    changeLevel: function( level )
     {
 
     },
@@ -73,6 +73,12 @@ var PlayScreen = me.ScreenObject.extend(
     startLevel: function( level )
     {
         // this only gets called on start?
+        me.audio.stopTrack();
+        // AWFUL SHIT
+        if( level != "testlevel" && level != "gravity" )
+        {
+            me.audio.playTrack( level );
+        }
         me.levelDirector.loadLevel( level );
         me.game.sort();
         this.doors = [];
@@ -294,6 +300,11 @@ var LevelChanger = me.LevelEntity.extend({
     onCollision : function()
     {
         this.collidable = false;
+        if( this.nextlevel != "testlevel" && this.nextlevel != "gravity" )
+        {
+            me.audio.stopTrack();
+            me.audio.playTrack( this.nextlevel );
+        }
         return this.parent();
     },
 

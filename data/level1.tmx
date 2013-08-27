@@ -112,23 +112,23 @@
     <property name="doorID" value="3"/>
    </properties>
   </object>
-  <object name="trash" x="3361" y="2903" width="70" height="71"/>
-  <object name="trash" x="3491" y="2903" width="70" height="71"/>
-  <object name="trash" x="3625" y="2901" width="70" height="71"/>
-  <object name="trash" x="4513" y="2181" width="70" height="71"/>
-  <object name="trash" x="5005" y="2519" width="70" height="71"/>
-  <object name="trash" x="5199" y="2377" width="70" height="71"/>
+  <object name="trash" x="4539" y="2153" width="70" height="71"/>
   <object name="trash" x="3557" y="1606" width="70" height="71"/>
-  <object name="trash" x="5413" y="975" width="70" height="71"/>
-  <object name="trash" x="8003" y="1223" width="70" height="71"/>
-  <object name="trash" x="8199" y="1032" width="70" height="71"/>
-  <object name="trash" x="7351" y="1603" width="70" height="71"/>
   <object name="trash" x="8931" y="1688" width="70" height="71"/>
   <object name="trash" x="8799" y="629" width="70" height="71"/>
-  <object name="trash" x="9805" y="1369" width="70" height="71"/>
   <object name="trash" x="9689" y="2531" width="70" height="71"/>
   <object name="trash" x="9869" y="2497" width="70" height="71"/>
   <object name="trash" x="9807" y="2673" width="70" height="71"/>
+  <object name="trash" x="3379" y="2930" width="48" height="48"/>
+  <object name="trash" x="3508" y="2931" width="48" height="48"/>
+  <object name="trash" x="3628" y="2933" width="48" height="48"/>
+  <object name="trash" x="5018" y="2547" width="48" height="48"/>
+  <object name="trash" x="5212" y="2402" width="48" height="48"/>
+  <object name="trash" x="5430" y="1011" width="48" height="48"/>
+  <object name="trash" x="7370" y="1633" width="48" height="48"/>
+  <object name="trash" x="8011" y="1251" width="48" height="48"/>
+  <object name="trash" x="8204" y="1059" width="48" height="48"/>
+  <object name="trash" x="9814" y="1396" width="48" height="48"/>
  </objectgroup>
  <layer name="foreground" width="257" height="95">
   <data encoding="base64">
